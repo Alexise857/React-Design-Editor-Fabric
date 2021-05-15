@@ -3,6 +3,7 @@ import Header from "@components/Header"
 import Panels from "@components/Panels"
 import Menu from "@components/Menu"
 import Canvas from "@components/Canvas"
+import Footer from "@components/Footer"
 
 const Container = styled.div`
   display: flex;
@@ -33,6 +34,7 @@ function Editor() {
         <SectionThree>
           <Menu />
           <Canvas />
+          <Footer />
         </SectionThree>
       </SectionOne>
     </Container>

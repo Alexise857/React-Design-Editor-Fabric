@@ -1,13 +1,10 @@
-import styled from "styled-components"
 import { useEffect, useState } from "react"
 import { Scrollbars } from "react-custom-scrollbars"
 import { getPixabayImages } from "@services/pixabay"
+import { Input } from "@chakra-ui/react"
+import { useDebounce } from "use-debounce"
+import PanelContainer from "./PanelContainer"
 
-const Container = styled.div`
-  color: #ffffff;
-  display: flex;
-  flex: 1;
-`
 interface Image {
   id: string
   preview: string
@@ -15,14 +12,21 @@ interface Image {
 }
 function PanelImage() {
   const [images, setImages] = useState<Image[]>([])
+  const [query, setQuery] = useState("")
+  const [value] = useDebounce(query, 1500)
 
   useEffect(() => {
     getImages("top")
   }, [])
 
+  useEffect(() => {
+    getImages(value)
+  }, [value])
+
+  const handleChange = (event: any) => setQuery(event.target.value)
+
   const getImages = async (query: string) => {
     const dataImages = await getPixabayImages(query)
-
     const images = dataImages.map((di) => ({
       id: di.id,
       preview: di.previewURL,
@@ -32,48 +36,51 @@ function PanelImage() {
   }
 
   return (
-    <Container>
-      <div style={{ position: "relative", flex: 1 }}>
+    <PanelContainer>
+      <Scrollbars autoHide>
         <div
           style={{
-            position: "absolute",
-            height: "100%",
-            width: "100%",
+            padding: "2rem 2rem 0",
           }}
         >
-          <Scrollbars autoHide>
-            <div
-              style={{
-                height: "100px",
-                padding: "1rem",
-              }}
-            >
-              <div
-                style={{
-                  backgroundColor: "rebeccapurple",
-                  height: "300px",
-                  display: "block",
-                }}
-              >
-                Hello
-              </div>
-            </div>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "1rem",
-                padding: "2rem",
-              }}
-            >
-              {images.map((img) => (
-                <img width="100%" key={img.id} src={img.preview} />
-              ))}
-            </div>
-          </Scrollbars>
+          <div
+            style={{
+              backgroundColor: "rebeccapurple",
+              display: "block",
+            }}
+          >
+            <Input
+              color="#333"
+              background="#fff"
+              value={query}
+              onChange={handleChange}
+              placeholder="Search images"
+            />
+          </div>
         </div>
-      </div>
-    </Container>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "1rem",
+            padding: "2rem",
+          }}
+        >
+          {images.map((img) => (
+            <div
+              key={img.id}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+            >
+              <img width="100%" src={img.preview} alt="preview" />
+            </div>
+          ))}
+        </div>
+      </Scrollbars>
+    </PanelContainer>
   )
 }
 

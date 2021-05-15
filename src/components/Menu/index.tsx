@@ -1,10 +1,11 @@
 import { useCanvasContext } from "@components/Canvas/hooks"
 import styled from "styled-components"
 import MenuObject from "./MenuObject"
-import DefaultObject from "./DefaultObject"
+import DefaultMenu from "./DefaultMenu"
+import MenuImage from "./MenuImage"
 
 const Container = styled.div`
-  height: 52px;
+  height: 48px;
   background: #ffffff;
   border-bottom: 1px solid rgba(57, 76, 96, 0.15);
   display: flex;
@@ -15,11 +16,16 @@ function Menu() {
   if (!activeObject) {
     return (
       <Container>
-        <DefaultObject />
+        <DefaultMenu />
       </Container>
     )
   }
-  return <Container>{activeObject.type === "path" && <MenuObject />}</Container>
+  return (
+    <Container>
+      {activeObject.type === "path" && <MenuObject />}
+      {activeObject.type === "image" && <MenuImage />}
+    </Container>
+  )
 }
 
 export default Menu

@@ -1,8 +1,9 @@
 import styled from "styled-components"
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { fabric } from "fabric"
 import { useCanvasContext } from "./hooks"
 import { Scrollbars } from "react-custom-scrollbars"
+import ResizeObserver from "resize-observer-polyfill"
 import {
   useCustomizationHandler,
   useEventsHandler,
@@ -16,7 +17,8 @@ const Container = styled.div`
 `
 
 function Canvas() {
-  const { setCanvas } = useCanvasContext()
+  const { setCanvas, setAreaDimension } = useCanvasContext()
+  const containerRef = useRef<any>()
   useCustomizationHandler()
   useEventsHandler()
   useZoomHandler()
@@ -30,9 +32,27 @@ function Canvas() {
       })
     )
   }, [setCanvas])
+
+  useEffect(() => {
+    const initialHeight = containerRef.current?.clientHeight
+    const intialWidth = containerRef.current?.clientWidth
+    setAreaDimension({ width: intialWidth! - 64, height: initialHeight! - 64 })
+    const resizeObserver = new ResizeObserver(
+      (entries: ResizeObserverEntry[]) => {
+        const { width = intialWidth, height = initialHeight } =
+          (entries[0] && entries[0].contentRect) || {}
+        setAreaDimension({ width: width! - 64, height: height! - 64 })
+      }
+    )
+    resizeObserver.observe(containerRef.current!)
+    return () => {
+      resizeObserver.unobserve(containerRef.current!)
+    }
+  }, [])
+
   return (
     <Container>
-      <div style={{ position: "relative", flex: 1 }}>
+      <div ref={containerRef} style={{ position: "relative", flex: 1 }}>
         <Scrollbars autoHide>
           <div
             style={{

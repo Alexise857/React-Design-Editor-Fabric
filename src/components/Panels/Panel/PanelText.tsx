@@ -7,7 +7,7 @@ import { Input } from "@chakra-ui/react"
 import styled from "styled-components"
 import PanelContainer from "@components/ScrollContainer"
 
-const HeadingText = styled.div`
+const BaseText = styled.div`
   background: rgba(255, 255, 255, 0.1);
   height: 50px;
   display: flex;
@@ -16,34 +16,18 @@ const HeadingText = styled.div`
   cursor: pointer;
   transition: background 0.4s;
   font-family: "Lexend";
+`
 
+const HeadingText = styled(BaseText)`
   font-weight: 700;
   font-size: 1.66rem;
 `
-const SubHeadingText = styled.div`
-  background: rgba(255, 255, 255, 0.1);
-  height: 50px;
-  display: flex;
-  align-items: center;
-  padding-left: 1rem;
-  cursor: pointer;
-  transition: background 0.4s;
-  font-family: "Lexend";
-
+const SubHeadingText = styled(BaseText)`
   background: rgba(255, 255, 255, 0.1);
   font-size: 1.12rem;
   font-weight: 500;
 `
-const BodyText = styled.div`
-  background: rgba(255, 255, 255, 0.1);
-  height: 50px;
-  display: flex;
-  align-items: center;
-  padding-left: 1rem;
-  cursor: pointer;
-  transition: background 0.4s;
-  font-family: "Lexend";
-
+const BodyText = styled(BaseText)`
   background: rgba(255, 255, 255, 0.1);
   font-size: 0.76rem;
   font-weight: 400;
@@ -82,42 +66,38 @@ function PanelText() {
     }
     addObject(options)
   }
-
+  const textBaseOptions = {
+    type: "textbox",
+    width: 320,
+    fontFamily: "Lexend",
+    textAlign: "center",
+  }
   const addHeading = () => {
     const options = {
-      type: "textbox",
+      ...textBaseOptions,
+      fontWeight: 700,
       text: "Add a heading",
       fontSize: 32,
-      width: 320,
-      fontWeight: 700,
-      fontFamily: "Lexend",
-      textAlign: "center",
     }
     addObject(options)
   }
 
   const addSubheading = () => {
     const options = {
-      type: "textbox",
-      text: "Add a subheading",
+      ...textBaseOptions,
       fontSize: 24,
-      width: 320,
+      text: "Add a subheading",
       fontWeight: 500,
-      fontFamily: "Lexend",
-      textAlign: "center",
     }
     addObject(options)
   }
 
   const addTextBody = () => {
     const options = {
-      type: "textbox",
+      ...textBaseOptions,
       text: "Add a little bit of body text",
       fontSize: 18,
-      width: 320,
       fontWeight: 300,
-      fontFamily: "Lexend",
-      textAlign: "center",
     }
     addObject(options)
   }

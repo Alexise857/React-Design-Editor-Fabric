@@ -14,11 +14,12 @@ const PIXABAY_URL = "https://pixabay.com/api/"
 const TEMPLATES_URL = ADONIS_APP + "/api/templates"
 const PIXABAY_KEY = "20824871-7548337191755cbbef05230ed"
 const SERVER_CANVAS_SAVE = ADONIS_APP + "/api/save-canvas"
+const SERVER_URL = "http://165.227.50.244/designer/"
 
 export function getTemplates(): Promise<ITemplate[]> {
   return new Promise((resolve, reject) => {
     axios
-      .get(TEMPLATES_URL)
+      .get(`${API_URL}/templates`)
       .then((response) => {
         const items = response.data
         const templates = items.map((item: any) => {
@@ -26,14 +27,11 @@ export function getTemplates(): Promise<ITemplate[]> {
             id: item.id,
             name: item.name,
             category: item.category,
-            image:
-              ADONIS_APP +
-              (item.files.length !== 0 ? item.files[0].filePath : item.image),
+            image: SERVER_URL + "templates/" + item.path + ".png",
             path: item.path,
             subcategory: {},
             createdAt: item.created_at,
             updatedAt: item.updated_at,
-            files: item.files,
           }
           const prevSubcategory = item.subcategory
           if (prevSubcategory && Object.keys(prevSubcategory).length > 0) {
@@ -49,6 +47,7 @@ export function getTemplates(): Promise<ITemplate[]> {
           }
           return template
         })
+        // console.log()
         resolve(templates)
       })
       .catch((err) => reject(err))
@@ -140,12 +139,12 @@ export function getWordArtCategories(): Promise<IWordArtCategory[]> {
   })
 }
 
-export function getTemplateObject(templateid: string, jsonpath: string) {
+export function getTemplateObject(templateid: any, jsonpath: any) {
   return new Promise((resolve, reject) => {
     axios
-      .get(TEMPLATES_URL + "/" + templateid)
+      .get(`${SERVER_URL}/gettemplate.php?path=${jsonpath}`)
       .then((response) => {
-        resolve(response)
+        resolve(response.data)
       })
       .catch((err) => reject(err))
   })

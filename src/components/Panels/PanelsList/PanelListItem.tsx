@@ -1,14 +1,22 @@
 import styled from "styled-components"
 
-const Container = styled.div`
+interface ContainerProps {
+  isActive: boolean
+}
+const Container = styled.div<ContainerProps>`
   cursor: pointer;
-  color: #ffffff;
+  color: ${(props) =>
+    props.isActive ? "#ffffff" : "rgba(255, 255, 255, 0.64)"};
   height: 72px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
   font-size: 0.8rem;
+  transition: "all 0.5s";
+  &:hover {
+    color: rgba(255, 255, 255, 1);
+  }
 `
 interface Props {
   name: string
@@ -22,6 +30,7 @@ function PanelListItem({ name, icon, setActiveTab, activeTab, label }: Props) {
   const isActive = name === activeTab
   return (
     <Container
+      isActive={isActive}
       className={`${isActive ? "PanelListItem active" : "PanelListItem"}`}
       key={name}
       onClick={() => setActiveTab(name)}

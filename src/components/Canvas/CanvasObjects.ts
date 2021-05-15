@@ -12,14 +12,28 @@ const CanvasObjects = {
     create: (options: any) =>
       Promise.resolve<fabric.Object>(new fabric.Path(options.path)),
   },
-  image: {
-    create: (options: any) =>
-      new Promise<fabric.Object>((resolve) => {
+  imagxe: {
+    create: (options: any) => {
+      return new Promise<fabric.Object>((resolve) => {
         fabric.Image.fromURL(options.url, (image) => {
           resolve(image)
         })
-      }),
+      })
+    },
   },
+  image: {
+    create: (obj: any) => {
+      const image = new Image()
+      if (obj.src) {
+        image.src = obj.src
+      }
+      const createdObj = new fabric.Image(image, {
+        ...obj,
+      })
+      return createdObj
+    },
+  },
+
   textbox: {
     create: (options: any) => {
       const { text, ...textOptions } = options

@@ -11,6 +11,8 @@ function useCanvasContext() {
     setActiveObject,
     formatSize,
     setFormatSize,
+    areaDimension,
+    setAreaDimension,
   } = useContext(CanvasContext)
 
   return {
@@ -22,6 +24,8 @@ function useCanvasContext() {
     setActiveObject,
     formatSize,
     setFormatSize,
+    areaDimension,
+    setAreaDimension,
   }
 }
 

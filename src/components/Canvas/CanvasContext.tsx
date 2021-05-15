@@ -11,12 +11,16 @@ interface ICanvasContext {
   setActiveObject: (object: fabric.Object | null) => void
   formatSize: FormatSize
   setFormatSize: (option: FormatSize) => void
+  areaDimension: AreaDimension
+  setAreaDimension: (option: AreaDimension) => void
 }
 
-interface FormatSize {
+interface Dimension {
   width: number
   height: number
 }
+export type FormatSize = Dimension
+export type AreaDimension = Dimension
 
 export const CanvasContext = createContext<ICanvasContext>({
   zoomRatio: 1,
@@ -29,6 +33,8 @@ export const CanvasContext = createContext<ICanvasContext>({
   setActiveObject: () => {},
   formatSize: { width: 0, height: 0 },
   setFormatSize: () => {},
+  areaDimension: { width: 0, height: 0 },
+  setAreaDimension: () => {},
 })
 
 export const CanvasProvider: FC = ({ children }) => {
@@ -37,6 +43,10 @@ export const CanvasProvider: FC = ({ children }) => {
   const [zoomRatio, setZoomRatio] = useState(1)
   const [zoomFitRatio, setZoomFitRatio] = useState(1)
   const [formatSize, setFormatSize] = useState<FormatSize>({
+    height: 400,
+    width: 600,
+  })
+  const [areaDimension, setAreaDimension] = useState<AreaDimension>({
     height: 400,
     width: 600,
   })
@@ -51,6 +61,8 @@ export const CanvasProvider: FC = ({ children }) => {
     setZoomFitRatio,
     formatSize,
     setFormatSize,
+    areaDimension,
+    setAreaDimension,
   }
 
   return (

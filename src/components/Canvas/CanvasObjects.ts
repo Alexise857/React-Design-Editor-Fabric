@@ -20,6 +20,14 @@ const CanvasObjects = {
         })
       }),
   },
+  textbox: {
+    create: (options: any) => {
+      const { text, ...textOptions } = options
+      return Promise.resolve<fabric.Textbox>(
+        new fabric.Textbox(text, textOptions)
+      )
+    },
+  },
 }
 
 export default CanvasObjects

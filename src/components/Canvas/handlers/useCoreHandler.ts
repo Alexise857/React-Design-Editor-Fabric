@@ -3,6 +3,7 @@ import { useCanvasContext } from "@components/Canvas/hooks"
 import CanvasObjects, {
   CanvasObjectType,
 } from "@components/Canvas/CanvasObjects"
+import { withDefaultColorScheme } from "@chakra-ui/react"
 
 function useCoreHandler() {
   const { canvas, setActiveObject } = useCanvasContext()
@@ -11,11 +12,14 @@ function useCoreHandler() {
    */
   const addObject = useCallback(
     async (options) => {
-      const object = await CanvasObjects[
-        options.type as CanvasObjectType
-      ].create(options)
+      const { type, ...objectOptions } = options
+      const object = await CanvasObjects[type as CanvasObjectType].create(
+        objectOptions
+      )
       if (canvas) {
-        object.scaleToHeight(160)
+        if (object.type != "textbox") {
+          object.scaleToHeight(160)
+        }
         canvas.add(object)
         object.center()
         canvas.setActiveObject(object)

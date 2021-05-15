@@ -4,7 +4,7 @@ interface ClosePanelProp {
 
 function ClosePanel({ closePanel }: ClosePanelProp) {
   return (
-    <div onClick={closePanel} className="panel-item-close">
+    <div onClick={closePanel} className="PanelItemClose">
       <div className="c2">
         <svg
           width="14"

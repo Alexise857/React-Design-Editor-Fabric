@@ -1,12 +1,30 @@
-import { styled } from "baseui"
+import styled from "styled-components"
+import { useState } from "react"
+import ClosePanel from "./ClosePanel"
+import Panels from "./Panels"
 
-const Container = styled("div", {
-  width: "72px",
-  background: "#0e1419",
-})
+interface ContainerProps {
+  collapse: boolean
+}
+const Container = styled.div<ContainerProps>`
+  display: flex;
+  position: relative;
+  background: #29303a;
+  transition: width 0.4s;
+  width: ${(props) => (props.collapse ? "390px" : "0px")};
+`
+interface Props {
+  activeTab: string
+}
+function PanelsList({ activeTab }: Props) {
+  const [collapse, setCollapse] = useState(true)
 
-function Panel() {
-  return <Container>Panel</Container>
+  return (
+    <Container collapse={collapse}>
+      <ClosePanel closePanel={() => setCollapse(!collapse)} />
+      {Panels[activeTab as "formats"]}
+    </Container>
+  )
 }
 
-export default Panel
+export default PanelsList

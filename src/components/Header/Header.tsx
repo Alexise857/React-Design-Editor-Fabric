@@ -1,10 +1,11 @@
-import { styled } from "baseui"
+import styled from "styled-components"
 
-const Container = styled("div", {
-  height: "60px",
-  // background: "#afafaf",
-  borderBottom: "1px solid rgba(57,76,96,.15)",
-})
+const Container = styled.div`
+  height: 60px;
+  border-bottom: 1px solid rgba(57, 76, 96, 0.15);
+  flex: none;
+`
+
 function Header() {
   return <Container></Container>
 }

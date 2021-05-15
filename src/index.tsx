@@ -1,23 +1,10 @@
 import ReactDOM from "react-dom"
 import reportWebVitals from "./reportWebVitals"
-import { Client as Styletron } from "styletron-engine-atomic"
-import { Provider as StyletronProvider } from "styletron-react"
-import { LightTheme, BaseProvider } from "baseui"
 import Editor from "@components/Editor"
+
+import "./i18n/index"
 import "./index.css"
 
-const engine = new Styletron()
+ReactDOM.render(<Editor />, document.getElementById("root"))
 
-ReactDOM.render(
-  <StyletronProvider value={engine}>
-    <BaseProvider theme={LightTheme}>
-      <Editor />
-    </BaseProvider>
-  </StyletronProvider>,
-  document.getElementById("root")
-)
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals()

@@ -85,15 +85,11 @@ function useCoreHandler() {
         objectOptions
       )
       console.log(object)
-      // if (canvas) {
-      //   if (object.type != "textbox") {
-      //     object.scaleToHeight(160)
-      //   }
-      //   canvas.add(object)
-      //   object.center()
-      //   canvas.setActiveObject(object)
-      //   setActiveObject(object)
-      // }
+      if (canvas) {
+        canvas.add(object)
+        canvas.setActiveObject(object)
+        setActiveObject(object)
+      }
     },
     [canvas]
   )

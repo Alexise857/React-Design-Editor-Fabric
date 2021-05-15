@@ -1,6 +1,6 @@
 import { FC, createContext, useState } from "react"
 
-interface CanvasContext {
+interface ICanvasContext {
   zoomRatio: number
   setZoomRatio: React.Dispatch<React.SetStateAction<number>>
   zoomFitRatio: number
@@ -9,9 +9,16 @@ interface CanvasContext {
   setCanvas: (canvas: fabric.Canvas) => void
   activeObject: fabric.Object | null
   setActiveObject: (object: fabric.Object | null) => void
+  formatSize: FormatSize
+  setFormatSize: (option: FormatSize) => void
 }
 
-export const Context = createContext<CanvasContext>({
+interface FormatSize {
+  width: number
+  height: number
+}
+
+export const CanvasContext = createContext<ICanvasContext>({
   zoomRatio: 1,
   setZoomRatio: () => {},
   zoomFitRatio: 1,
@@ -20,6 +27,8 @@ export const Context = createContext<CanvasContext>({
   setCanvas: () => {},
   activeObject: null,
   setActiveObject: () => {},
+  formatSize: { width: 0, height: 0 },
+  setFormatSize: () => {},
 })
 
 export const CanvasProvider: FC = ({ children }) => {
@@ -27,6 +36,10 @@ export const CanvasProvider: FC = ({ children }) => {
   const [activeObject, setActiveObject] = useState<fabric.Object | null>(null)
   const [zoomRatio, setZoomRatio] = useState(1)
   const [zoomFitRatio, setZoomFitRatio] = useState(1)
+  const [formatSize, setFormatSize] = useState<FormatSize>({
+    height: 400,
+    width: 600,
+  })
   const context = {
     canvas,
     setCanvas,
@@ -36,7 +49,11 @@ export const CanvasProvider: FC = ({ children }) => {
     setZoomRatio,
     zoomFitRatio,
     setZoomFitRatio,
+    formatSize,
+    setFormatSize,
   }
 
-  return <Context.Provider value={context}>{children}</Context.Provider>
+  return (
+    <CanvasContext.Provider value={context}>{children}</CanvasContext.Provider>
+  )
 }

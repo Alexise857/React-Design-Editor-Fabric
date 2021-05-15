@@ -1,5 +1,5 @@
 import { useCallback } from "react"
-import { useCanvasContext } from "@/hooks"
+import { useCanvasContext } from "@components/Canvas/hooks"
 import CanvasObjects, {
   CanvasObjectType,
 } from "@components/Canvas/CanvasObjects"
@@ -39,11 +39,23 @@ function useCoreHandler() {
    */
   const getObject = useCallback(() => {}, [])
 
+  const setCanvasBackgroundColor = useCallback(
+    (color) => {
+      if (canvas) {
+        canvas.setBackgroundColor(color, () => {
+          canvas.requestRenderAll()
+        })
+      }
+    },
+    [canvas]
+  )
+
   return {
     addObject,
     updateObject,
     removeObject,
     getObject,
+    setCanvasBackgroundColor,
   }
 }
 

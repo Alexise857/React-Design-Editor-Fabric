@@ -11,7 +11,7 @@ const Container = styled.div<ContainerProps>`
   position: relative;
   background: #29303a;
   transition: width 0.4s;
-  width: ${(props) => (props.collapse ? "390px" : "0px")};
+  width: ${(props) => (props.collapse ? "370px" : "0px")};
 `
 interface Props {
   activeTab: string

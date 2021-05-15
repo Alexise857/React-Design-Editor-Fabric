@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import Context from "@/contexts/canvas"
+import { CanvasContext } from "@components/Canvas"
 
 function useCanvasContext() {
   const {
@@ -9,7 +9,9 @@ function useCanvasContext() {
     canvas,
     activeObject,
     setActiveObject,
-  } = useContext(Context)
+    formatSize,
+    setFormatSize,
+  } = useContext(CanvasContext)
 
   return {
     zoomRatio,
@@ -18,6 +20,8 @@ function useCanvasContext() {
     canvas,
     activeObject,
     setActiveObject,
+    formatSize,
+    setFormatSize,
   }
 }
 

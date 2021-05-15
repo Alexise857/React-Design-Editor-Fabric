@@ -6,7 +6,7 @@ const Container = styled.div`
   flex: 1;
 `
 
-function PanelContainer({ children }: any) {
+function ScrollContainer({ children }: any) {
   return (
     <Container>
       <div style={{ position: "relative", flex: 1 }}>
@@ -24,4 +24,4 @@ function PanelContainer({ children }: any) {
   )
 }
 
-export default PanelContainer
+export default ScrollContainer

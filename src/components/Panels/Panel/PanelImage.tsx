@@ -3,8 +3,8 @@ import { Scrollbars } from "react-custom-scrollbars"
 import { getPixabayImages } from "@services/pixabay"
 import { Input } from "@chakra-ui/react"
 import { useDebounce } from "use-debounce"
-import PanelContainer from "./PanelContainer"
-import useCoreHandler from "@/handlers/useCoreHandler"
+import PanelContainer from "../../ScrollContainer/ScrollContainer"
+import useCoreHandler from "@/components/Canvas/handlers/useCoreHandler"
 interface Image {
   id: string
   preview: string

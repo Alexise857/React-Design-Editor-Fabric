@@ -2,8 +2,8 @@ import { useState } from "react"
 import { objects } from "@constants/objects"
 import { Scrollbars } from "react-custom-scrollbars"
 import { Input } from "@chakra-ui/react"
-import PanelContainer from "./PanelContainer"
-import useCoreHandler from "@/handlers/useCoreHandler"
+import PanelContainer from "../../ScrollContainer/ScrollContainer"
+import useCoreHandler from "@/components/Canvas/handlers/useCoreHandler"
 
 function PanelObject() {
   const [query, setQuery] = useState("")
@@ -50,8 +50,21 @@ function PanelObject() {
           }}
         >
           {objects.map((object) => (
-            <div key={object.id} onClick={() => addObjectToCanvas(object.path)}>
-              <img src={object.preview} alt="preview" />
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "0 0 1rem 0",
+              }}
+              key={object.id}
+              onClick={() => addObjectToCanvas(object.path)}
+            >
+              <img
+                style={{ maxHeight: "90px", maxWidth: "100px" }}
+                src={object.preview}
+                alt="preview"
+              />
             </div>
           ))}
         </div>

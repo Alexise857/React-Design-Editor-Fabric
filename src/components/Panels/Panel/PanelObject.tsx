@@ -3,10 +3,20 @@ import { objects } from "@constants/objects"
 import { Scrollbars } from "react-custom-scrollbars"
 import { Input } from "@chakra-ui/react"
 import PanelContainer from "./PanelContainer"
+import useCoreHandler from "@/handlers/useCoreHandler"
 
 function PanelObject() {
   const [query, setQuery] = useState("")
   const handleChange = (event: any) => setQuery(event.target.value)
+  const { addObject } = useCoreHandler()
+
+  const addObjectToCanvas = (pathString: string) => {
+    const options = {
+      path: pathString,
+      type: "path",
+    }
+    addObject(options)
+  }
 
   return (
     <PanelContainer>
@@ -40,7 +50,9 @@ function PanelObject() {
           }}
         >
           {objects.map((object) => (
-            <img key={object.id} src={object.preview} alt="preview" />
+            <div key={object.id} onClick={() => addObjectToCanvas(object.path)}>
+              <img src={object.preview} alt="preview" />
+            </div>
           ))}
         </div>
       </Scrollbars>

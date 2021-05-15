@@ -4,7 +4,7 @@ import { getPixabayImages } from "@services/pixabay"
 import { Input } from "@chakra-ui/react"
 import { useDebounce } from "use-debounce"
 import PanelContainer from "./PanelContainer"
-
+import useCoreHandler from "@/handlers/useCoreHandler"
 interface Image {
   id: string
   preview: string
@@ -14,7 +14,7 @@ function PanelImage() {
   const [images, setImages] = useState<Image[]>([])
   const [query, setQuery] = useState("")
   const [value] = useDebounce(query, 1500)
-
+  const { addObject } = useCoreHandler()
   useEffect(() => {
     getImages("top")
   }, [])
@@ -33,6 +33,21 @@ function PanelImage() {
       original: di.webformatURL,
     }))
     setImages(images)
+  }
+
+  const addObjectToCanvas = (url: string) => {
+    const options = {
+      type: "image",
+      url,
+    }
+    addObject(options)
+    // fabric.Image.fromURL(url, (img) => {
+    //   if (canvas) {
+    //     img.scaleToHeight(200)
+    //     canvas.add(img)
+    //     img.center()
+    //   }
+    // })
   }
 
   return (
@@ -74,6 +89,7 @@ function PanelImage() {
                 alignItems: "center",
                 cursor: "pointer",
               }}
+              onClick={() => addObjectToCanvas(img.original)}
             >
               <img width="100%" src={img.preview} alt="preview" />
             </div>

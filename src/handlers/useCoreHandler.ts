@@ -5,7 +5,7 @@ import CanvasObjects, {
 } from "@components/Canvas/CanvasObjects"
 
 function useCoreHandler() {
-  const { canvas } = useCanvasContext()
+  const { canvas, setActiveObject } = useCanvasContext()
   /**
    * Add object to canvas
    */
@@ -18,6 +18,8 @@ function useCoreHandler() {
         object.scaleToHeight(160)
         canvas.add(object)
         object.center()
+        canvas.setActiveObject(object)
+        setActiveObject(object)
       }
     },
     [canvas]

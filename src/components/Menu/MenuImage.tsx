@@ -40,10 +40,8 @@ function MenuImage() {
     <Container>
       <ButtonGroup spacing={0}>
         <Menu arrowPadding={10}>
-          <MenuButton>
-            <Button background="white" fontFamily="Rubik" fontWeight="400">
-              Flip
-            </Button>
+          <MenuButton fontFamily="Rubik" fontWeight="400">
+            Flip
           </MenuButton>
           <MenuList>
             <MenuItem onClick={() => updateFlip("flipX")}>

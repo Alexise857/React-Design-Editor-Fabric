@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useCanvasContext } from "@components/Canvas/hooks"
-import { TwitterPicker } from "react-color"
 import styled from "styled-components"
+import { TwitterPicker } from "react-color"
 import {
   Menu,
   MenuButton,
@@ -10,7 +10,12 @@ import {
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
+  Button,
+  ButtonGroup,
+  Box,
+  MenuItem,
 } from "@chakra-ui/react"
+import { fontsList } from "@/constants/fonts"
 
 const Container = styled.div`
   display: flex;
@@ -21,13 +26,30 @@ const Container = styled.div`
   position: relative;
   height: 48px;
 `
-function MenuObject() {
+
+function MenuText() {
   const { activeObject, canvas } = useCanvasContext()
   const [displayColorPicker, setDisplayColorPicker] = useState(false)
   const [options, setOptions] = useState({
-    fill: "#333333",
-    objectType: "single",
+    fontFamily: "Select a font",
   })
+  const updateFontFamilty = (font: string) => {
+    setOptions({ fontFamily: font })
+    if (activeObject) {
+      //@ts-ignore
+      activeObject.set("fontFamily", font)
+      canvas?.requestRenderAll()
+    }
+  }
+
+  const updateOptions = (values: any) => {
+    setOptions({ ...options, ...values })
+  }
+  useEffect(() => {
+    //@ts-ignore
+    const fontFamily = activeObject.fontFamily
+    updateOptions({ fontFamily })
+  }, [activeObject])
 
   const popover: React.CSSProperties = {
     marginTop: "16px",
@@ -41,41 +63,20 @@ function MenuObject() {
     bottom: "0px",
     left: "0px",
   }
-  const updateOptions = (values: any) => {
-    setOptions(values)
-  }
-  useEffect(() => {
-    if (activeObject) {
-      if (activeObject?.groupType === "path") {
-        const activeGroup = activeObject._objects
-        if (activeGroup && activeGroup[0]) {
-          updateOptions({
-            objectType: "group",
-            fill: activeGroup[0].fill ? activeGroup[0].fill : "#333333",
-          })
-        }
-      } else {
-        updateOptions({
-          objectType: "single",
-          fill: activeObject.fill ? activeObject.fill : "#333333",
-        })
-      }
-    }
-  }, [activeObject])
 
   const handleChange = (color: any) => {
-    setOptions({ ...options, fill: color.hex })
-    if (activeObject && options.objectType === "single") {
-      activeObject.set("fill", color.hex)
-      canvas?.requestRenderAll()
-    } else {
-      if (activeObject?._objects) {
-        activeObject?._objects.forEach((object) => {
-          object.set("fill", color.hex)
-        })
-        canvas?.requestRenderAll()
-      }
-    }
+    // setOptions({ ...options, fill: color.hex })
+    // if (activeObject && options.objectType === "single") {
+    //   activeObject.set("fill", color.hex)
+    //   canvas?.requestRenderAll()
+    // } else {
+    //   if (activeObject?._objects) {
+    //     activeObject?._objects.forEach((object) => {
+    //       object.set("fill", color.hex)
+    //     })
+    //     canvas?.requestRenderAll()
+    //   }
+    // }
   }
   const handleClick = () => {
     setDisplayColorPicker(!displayColorPicker)
@@ -84,29 +85,110 @@ function MenuObject() {
   const handleClose = () => {
     setDisplayColorPicker(false)
   }
+
   return (
     <Container>
-      <div>
-        <div
-          style={{
-            cursor: "pointer",
-            position: "relative",
-            height: "30px",
-            width: "30px",
-            background: `${options.fill}`,
-            boxShadow: "inset 0 0 0 1px rgb(57 76 96 / 15%)",
-            borderRadius: "2px",
-          }}
-          onClick={() => handleClick()}
-        ></div>
+      <ButtonGroup spacing={2}>
+        <Menu arrowPadding={10}>
+          <MenuButton
+            textAlign="left"
+            border="1px solid rgba(57,76,96,.15)"
+            fontFamily="Rubik"
+            fontWeight="400"
+            width="220px"
+            padding="0.2rem 0.6rem"
+          >
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 20px",
+                alignItems: "center",
+              }}
+            >
+              <div>{options.fontFamily}</div>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <i className="material-icons">expand_more</i>
+              </div>
+            </div>
+          </MenuButton>
+          <MenuList>
+            {fontsList.map((font) => (
+              <MenuItem
+                fontFamily={`${font}`}
+                key={font}
+                onClick={() => updateFontFamilty(font)}
+              >
+                {font}
+              </MenuItem>
+            ))}
+          </MenuList>
+        </Menu>
+        <ButtonGroup spacing={0}>
+          <Box
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontWeight: 400,
+              fontFamily: "Rubik",
+              border: "1px solid rgba(57,76,96,.15)",
+              width: "30px",
+            }}
+          >
+            -
+          </Box>
+          <Box
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontWeight: 400,
+              fontFamily: "Rubik",
+              borderTop: "1px solid rgba(57,76,96,.15)",
+              borderBottom: "1px solid rgba(57,76,96,.15)",
+              width: "40px",
+            }}
+          >
+            12.3
+          </Box>
+          <Box
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontWeight: 400,
+              fontFamily: "Rubik",
+              border: "1px solid rgba(57,76,96,.15)",
+              width: "30px",
+            }}
+          >
+            +
+          </Box>
+        </ButtonGroup>
+        <Box>
+          <div>
+            <div
+              style={{
+                cursor: "pointer",
+                position: "relative",
+                height: "30px",
+                width: "30px",
+                background: "red",
+                boxShadow: "inset 0 0 0 1px rgb(57 76 96 / 15%)",
+                borderRadius: "2px",
+              }}
+              onClick={() => handleClick()}
+            ></div>
 
-        {displayColorPicker ? (
-          <div style={{ ...popover }}>
-            <div style={cover} onClick={handleClose} />
-            <TwitterPicker onChange={handleChange} />
+            {displayColorPicker ? (
+              <div style={{ ...popover }}>
+                <div style={cover} onClick={handleClose} />
+                <TwitterPicker onChange={handleChange} />
+              </div>
+            ) : null}
           </div>
-        ) : null}
-      </div>
+        </Box>
+      </ButtonGroup>
       <div
         style={{
           display: "grid",
@@ -137,6 +219,22 @@ function MenuObject() {
         </div>
       </div>
     </Container>
+  )
+}
+
+function FontColorIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+    >
+      <path
+        d="M11 2L5.5 16h2.25l1.12-3h6.25l1.12 3h2.25L13 2h-2zm-1.38 9L12 4.67 14.38 11H9.62z"
+        fill="currentColor"
+      ></path>
+    </svg>
   )
 }
 
@@ -212,4 +310,4 @@ function DuplicateObjectIcon() {
   )
 }
 
-export default MenuObject
+export default MenuText

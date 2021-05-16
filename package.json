@@ -21,6 +21,7 @@
     "axios": "^0.21.1",
     "craco": "^0.0.3",
     "fabric": "^4.4.0",
+    "fabric-history": "^1.6.0",
     "focus-visible": "^5.2.0",
     "framer-motion": "^4",
     "i18next": "^20.2.2",

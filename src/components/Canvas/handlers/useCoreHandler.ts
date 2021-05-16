@@ -1,9 +1,11 @@
 import { useCallback } from "react"
 import { useCanvasContext } from "@components/Canvas/hooks"
+import { loadImageFromURL } from "@components/Canvas/utils/canvas"
+import { FormatSize } from "@components/Canvas/CanvasContext"
 import CanvasObjects, {
   CanvasObjectType,
 } from "@components/Canvas/CanvasObjects"
-import { FormatSize } from "@components/Canvas/CanvasContext"
+import { fabric } from "fabric"
 
 function useCoreHandler() {
   const { canvas, setActiveObject, setFormatSize, areaDimension } =
@@ -75,38 +77,87 @@ function useCoreHandler() {
   )
 
   /**
-   * importObjects
+   * Import template
    */
+  const isValidCanvasOption = (options: any) => {
+    if (
+      options.width &&
+      typeof options.width === "number" &&
+      options.height &&
+      typeof options.height === "number"
+    ) {
+      return true
+    }
+    return false
+  }
+  const importTemplate = useCallback(
+    async ({ options, canvasJSON }: any) => {
+      try {
+        const canvasOptions = JSON.parse(options)
+        if (canvas && isValidCanvasOption(canvasOptions)) {
+          canvas.clear()
+          canvas.setBackgroundColor("#ffffff", () => canvas.requestRenderAll())
+          if (options && canvasJSON) {
+            const dimension = {
+              width: canvasOptions.width,
+              height: canvasOptions.height,
+            }
+            const zoomFitRatio = calculateZoomFitRatio(dimension)
+            updateFormatSize({ ...dimension, zoomRatio: zoomFitRatio })
+            for (const objectOption of canvasJSON.objects) {
+              if (objectOption.type === "image") {
+                const object = await loadImageFromURL(objectOption.src)
+                object.set({ ...objectOption })
+                canvas?.add(object)
+              }
+              if (objectOption.type === "path") {
+                fabric.util.enlivenObjects(
+                  [objectOption],
+                  (objects: fabric.Object[]) => {
+                    for (const object of objects) {
+                      canvas.add(object)
+                    }
+                  },
+                  ""
+                )
+              }
 
-  const importObject = useCallback(
-    async (options) => {
-      const { type, ...objectOptions } = options
-      const object = await CanvasObjects[type as CanvasObjectType].create(
-        objectOptions
-      )
-      console.log(object)
-      if (canvas) {
-        canvas.add(object)
-        canvas.setActiveObject(object)
-        setActiveObject(object)
+              if (objectOption.type === "rect") {
+                const object = new fabric.Rect(objectOption)
+                canvas.add(object)
+              }
+
+              if (objectOption.type === "textbox") {
+                const object = new fabric.Textbox(objectOption.text, {
+                  ...objectOption,
+                })
+                canvas.add(object)
+              }
+
+              if (objectOption.type === "group") {
+                fabric.util.enlivenObjects(
+                  [objectOption],
+                  (objects: fabric.Object[]) => {
+                    for (const object of objects) {
+                      canvas.add(object)
+                    }
+                  },
+                  ""
+                )
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.error("ERROR IMPORTING TEMPLATE")
       }
     },
     [canvas]
   )
-  /**
-   * Update object
-   */
-  const updateObject = useCallback(() => {}, [])
 
   /**
-   * Remove object
+   * setCanvasBackgroundColor
    */
-  const removeObject = useCallback(() => {}, [])
-
-  /**
-   * Get object
-   */
-  const getObject = useCallback(() => {}, [])
 
   const setCanvasBackgroundColor = useCallback(
     (color) => {
@@ -121,13 +172,10 @@ function useCoreHandler() {
 
   return {
     addObject,
-    updateObject,
-    removeObject,
-    getObject,
     setCanvasBackgroundColor,
     updateFormatSize,
     calculateZoomFitRatio,
-    importObject,
+    importTemplate,
   }
 }
 

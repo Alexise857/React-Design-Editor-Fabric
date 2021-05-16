@@ -20,14 +20,19 @@ const panelItems = [
     name: "text",
   },
   {
-    icon: "text_snippet",
-    label: "Doküman",
-    name: "documents",
-  },
-  {
     icon: "streetview",
     label: "Nesneler",
     name: "objects",
+  },
+  {
+    icon: "insert_chart_outlined",
+    label: "Grafikler",
+    name: "graphics",
+  },
+  {
+    icon: "text_snippet",
+    label: "Doküman",
+    name: "documents",
   },
   {
     icon: "queue_music",
@@ -38,11 +43,6 @@ const panelItems = [
     icon: "videocam",
     label: "Videolar",
     name: "videos",
-  },
-  {
-    icon: "insert_chart_outlined",
-    label: "Grafikler",
-    name: "graphics",
   },
   {
     icon: "clear_all",

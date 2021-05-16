@@ -1,5 +1,9 @@
 import { FC, createContext, useState } from "react"
 
+interface FabricObject extends fabric.Object {
+  groupType?: string
+  _objects?: fabric.Object[]
+}
 interface ICanvasContext {
   zoomRatio: number
   setZoomRatio: React.Dispatch<React.SetStateAction<number>>
@@ -7,8 +11,8 @@ interface ICanvasContext {
   setZoomFitRatio: React.Dispatch<React.SetStateAction<number>>
   canvas: fabric.Canvas | null
   setCanvas: (canvas: fabric.Canvas) => void
-  activeObject: fabric.Object | null
-  setActiveObject: (object: fabric.Object | null) => void
+  activeObject: FabricObject | null
+  setActiveObject: (object: FabricObject | null) => void
   formatSize: FormatSize
   setFormatSize: (option: FormatSize) => void
   areaDimension: AreaDimension
@@ -39,7 +43,7 @@ export const CanvasContext = createContext<ICanvasContext>({
 
 export const CanvasProvider: FC = ({ children }) => {
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null)
-  const [activeObject, setActiveObject] = useState<fabric.Object | null>(null)
+  const [activeObject, setActiveObject] = useState<FabricObject | null>(null)
   const [zoomRatio, setZoomRatio] = useState(1)
   const [zoomFitRatio, setZoomFitRatio] = useState(1)
   const [formatSize, setFormatSize] = useState<FormatSize>({

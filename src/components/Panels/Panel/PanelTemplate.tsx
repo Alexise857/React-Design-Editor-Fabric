@@ -5,40 +5,20 @@ import { useCoreHandler } from "@components/Canvas/handlers"
 import { Input } from "@chakra-ui/react"
 import { selectTemplates } from "@store/reducers/templates/selectors"
 import { getTemplateObject } from "@services/api"
-import { useCanvasContext } from "@/components/Canvas/hooks"
 import PanelContainer from "@components/ScrollContainer"
 
 function PanelTemplate() {
   const [query, setQuery] = useState("")
   const handleChange = (event: any) => setQuery(event.target.value)
   const templates = useSelector(selectTemplates)
-  const { updateFormatSize, calculateZoomFitRatio, addObject, importObject } =
-    useCoreHandler()
-  const { setZoomRatio, canvas } = useCanvasContext()
+  const { importTemplate } = useCoreHandler()
 
   const addTemplateToCanvas = async (template: any, path: string) => {
     const [options, canvasJSON] = (await getTemplateObject(
       template,
       path
     )) as any
-    if (options && canvasJSON) {
-      const canvasOptions = JSON.parse(options)
-      const dimension = {
-        width: canvasOptions.width,
-        height: canvasOptions.height,
-      }
-      const zoomFitRatio = calculateZoomFitRatio(dimension)
-      setZoomRatio(zoomFitRatio)
-      updateFormatSize({ ...dimension, zoomRatio: zoomFitRatio })
-      // canvas?.loadFromJSON()
-      canvasJSON.objects.forEach((object: any) => {
-        importObject(object)
-        // const
-        // if(object.type === "image"){
-        //   new fabric.Image.fromURL
-        // }
-      })
-    }
+    importTemplate({ options, canvasJSON })
   }
 
   return (

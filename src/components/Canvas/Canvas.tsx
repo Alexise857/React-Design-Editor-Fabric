@@ -11,6 +11,8 @@ import {
   useZoomHandler,
 } from "./handlers"
 
+import "fabric-history"
+
 const Container = styled.div`
   display: flex;
   flex: 1;
@@ -36,12 +38,12 @@ function Canvas() {
   useEffect(() => {
     const initialHeight = containerRef.current?.clientHeight
     const intialWidth = containerRef.current?.clientWidth
-    setAreaDimension({ width: intialWidth! - 64, height: initialHeight! - 64 })
+    setAreaDimension({ width: intialWidth! - 32, height: initialHeight! - 32 })
     const resizeObserver = new ResizeObserver(
       (entries: ResizeObserverEntry[]) => {
         const { width = intialWidth, height = initialHeight } =
           (entries[0] && entries[0].contentRect) || {}
-        setAreaDimension({ width: width! - 64, height: height! - 64 })
+        setAreaDimension({ width: width! - 32, height: height! - 32 })
       }
     )
     resizeObserver.observe(containerRef.current!)
@@ -73,7 +75,7 @@ function Canvas() {
             >
               <div
                 style={{
-                  padding: "2rem",
+                  padding: "1rem",
                 }}
               >
                 <canvas id="canvas"></canvas>
@@ -85,4 +87,5 @@ function Canvas() {
     </Container>
   )
 }
+
 export default Canvas

@@ -20,9 +20,14 @@ function Menu() {
       </Container>
     )
   }
+
   return (
     <Container>
-      {activeObject.type === "path" && <MenuObject />}
+      {activeObject.type === "path" || activeObject.groupType === "path" ? (
+        <MenuObject />
+      ) : (
+        <></>
+      )}
       {activeObject.type === "image" && <MenuImage />}
     </Container>
   )

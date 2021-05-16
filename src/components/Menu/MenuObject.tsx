@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useCanvasContext } from "@components/Canvas/hooks"
 import { TwitterPicker } from "react-color"
 import styled from "styled-components"
@@ -24,7 +24,10 @@ const Container = styled.div`
 function MenuObject() {
   const { activeObject, canvas } = useCanvasContext()
   const [displayColorPicker, setDisplayColorPicker] = useState(false)
-  const [options, setOptions] = useState({ fill: "#333333" })
+  const [options, setOptions] = useState({
+    fill: "#333333",
+    objectType: "single",
+  })
 
   const popover: React.CSSProperties = {
     marginTop: "16px",
@@ -38,12 +41,40 @@ function MenuObject() {
     bottom: "0px",
     left: "0px",
   }
-
-  const handleChange = (color: any, event: any) => {
-    setOptions({ ...options, fill: color.hex })
+  const updateOptions = (values: any) => {
+    setOptions(values)
+  }
+  useEffect(() => {
     if (activeObject) {
+      if (activeObject?.groupType === "path") {
+        const activeGroup = activeObject._objects
+        if (activeGroup && activeGroup[0]) {
+          updateOptions({
+            objectType: "group",
+            fill: activeGroup[0].fill ? activeGroup[0].fill : "#333333",
+          })
+        }
+      } else {
+        updateOptions({
+          objectType: "single",
+          fill: activeObject.fill ? activeObject.fill : "#333333",
+        })
+      }
+    }
+  }, [activeObject])
+
+  const handleChange = (color: any) => {
+    setOptions({ ...options, fill: color.hex })
+    if (activeObject && options.objectType === "single") {
       activeObject.set("fill", color.hex)
       canvas?.requestRenderAll()
+    } else {
+      if (activeObject?._objects) {
+        activeObject?._objects.forEach((object) => {
+          object.set("fill", color.hex)
+        })
+        canvas?.requestRenderAll()
+      }
     }
   }
   const handleClick = () => {

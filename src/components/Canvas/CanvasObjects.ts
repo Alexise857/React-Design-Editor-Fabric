@@ -27,10 +27,10 @@ const CanvasObjects = {
       if (obj.src) {
         image.src = obj.src
       }
-      const createdObj = new fabric.Image(image, {
+      const object = new fabric.Image(image, {
         ...obj,
       })
-      return createdObj
+      return Promise.resolve(object)
     },
   },
 

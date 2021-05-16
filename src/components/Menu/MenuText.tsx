@@ -32,9 +32,12 @@ function MenuText() {
   const [displayColorPicker, setDisplayColorPicker] = useState(false)
   const [options, setOptions] = useState({
     fontFamily: "Select a font",
+    fill: "#000",
+    fontSize: 0
   })
+
   const updateFontFamilty = (font: string) => {
-    setOptions({ fontFamily: font })
+    setOptions({ ...options, fontFamily: font })
     if (activeObject) {
       //@ts-ignore
       activeObject.set("fontFamily", font)
@@ -48,7 +51,11 @@ function MenuText() {
   useEffect(() => {
     //@ts-ignore
     const fontFamily = activeObject.fontFamily
-    updateOptions({ fontFamily })
+    //@ts-ignore
+    const fill = activeObject.fill
+    //@ts-ignore
+    const fontSize = activeObject.fontSize
+    updateOptions({ fontFamily, fill , fontSize})
   }, [activeObject])
 
   const popover: React.CSSProperties = {
@@ -67,8 +74,9 @@ function MenuText() {
   const handleChange = (color: any) => {
     // setOptions({ ...options, fill: color.hex })
     // if (activeObject && options.objectType === "single") {
-    //   activeObject.set("fill", color.hex)
-    //   canvas?.requestRenderAll()
+      activeObject?.set("fill", color.hex)
+      canvas?.requestRenderAll()
+      setOptions({ ...options, fill: color.hex })
     // } else {
     //   if (activeObject?._objects) {
     //     activeObject?._objects.forEach((object) => {
@@ -84,6 +92,20 @@ function MenuText() {
 
   const handleClose = () => {
     setDisplayColorPicker(false)
+  }
+
+  const handleIncrementFontSize = ( size: number ) => {
+    //@ts-ignore
+    activeObject?.set("fontSize", size)
+    canvas?.requestRenderAll()
+    setOptions({ ...options, fontSize: ++options.fontSize  })
+  }
+
+  const handleDecreaseFontSize = ( size: number ) => {
+    //@ts-ignore
+    activeObject?.set("fontSize", size)
+    canvas?.requestRenderAll()
+    setOptions({ ...options, fontSize: --options.fontSize  })
   }
 
   return (
@@ -125,6 +147,8 @@ function MenuText() {
         </Menu>
         <ButtonGroup spacing={0}>
           <Box
+            as="button"
+            onClick={() => handleDecreaseFontSize(options.fontSize)}
             style={{
               display: "flex",
               alignItems: "center",
@@ -149,9 +173,11 @@ function MenuText() {
               width: "40px",
             }}
           >
-            12.3
+            {options.fontSize}
           </Box>
           <Box
+            as="button"
+            onClick={() => handleIncrementFontSize(options.fontSize)}
             style={{
               display: "flex",
               alignItems: "center",
@@ -173,7 +199,7 @@ function MenuText() {
                 position: "relative",
                 height: "30px",
                 width: "30px",
-                background: "red",
+                background: `${options.fill}`,
                 boxShadow: "inset 0 0 0 1px rgb(57 76 96 / 15%)",
                 borderRadius: "2px",
               }}
@@ -202,7 +228,7 @@ function MenuText() {
           </MenuButton>
           <MenuList marginTop="2">
             <div style={{ margin: "0.5rem 1.5rem" }}>
-              <Slider aria-label="slider-ex-1" defaultValue={30}>
+              <Slider aria-label="slider-ex-1" defaultValue={30} onChange={(val) => console.log(val)}>
                 <SliderTrack>
                   <SliderFilledTrack />
                 </SliderTrack>

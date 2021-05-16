@@ -15,9 +15,13 @@ const CanvasObjects = {
   image: {
     create: (options: any) => {
       return new Promise<fabric.Object>((resolve) => {
-        fabric.Image.fromURL(options.url, (image) => {
-          resolve(image)
-        })
+        fabric.Image.fromURL(
+          options.url,
+          (image) => {
+            resolve(image)
+          },
+          { crossOrigin: "Anonymous" }
+        )
       })
     },
   },

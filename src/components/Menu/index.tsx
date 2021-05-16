@@ -3,6 +3,7 @@ import styled from "styled-components"
 import MenuObject from "./MenuObject"
 import DefaultMenu from "./DefaultMenu"
 import MenuImage from "./MenuImage"
+import MenuText from "./MenuText"
 
 const Container = styled.div`
   height: 48px;
@@ -29,6 +30,7 @@ function Menu() {
         <></>
       )}
       {activeObject.type === "image" && <MenuImage />}
+      {activeObject.type === "textbox" && <MenuText />}
     </Container>
   )
 }

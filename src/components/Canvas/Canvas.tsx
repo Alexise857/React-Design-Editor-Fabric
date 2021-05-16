@@ -11,6 +11,8 @@ import {
   useZoomHandler,
 } from "./handlers"
 
+import "fabric-history"
+
 const Container = styled.div`
   display: flex;
   flex: 1;
@@ -85,4 +87,5 @@ function Canvas() {
     </Container>
   )
 }
+
 export default Canvas

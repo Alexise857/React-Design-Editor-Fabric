@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useCanvasContext } from "@components/Canvas/hooks"
 import styled from "styled-components"
 import { TwitterPicker } from "react-color"
@@ -10,7 +10,6 @@ import {
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
-  Button,
   ButtonGroup,
   Box,
   MenuItem,
@@ -33,21 +32,9 @@ function MenuText() {
   const [options, setOptions] = useState({
     fontFamily: "Select a font",
     fill: "#000",
-    fontSize: 0
+    fontSize: 0,
   })
 
-  const updateFontFamilty = (font: string) => {
-    setOptions({ ...options, fontFamily: font })
-    if (activeObject) {
-      //@ts-ignore
-      activeObject.set("fontFamily", font)
-      canvas?.requestRenderAll()
-    }
-  }
-
-  const updateOptions = (values: any) => {
-    setOptions({ ...options, ...values })
-  }
   useEffect(() => {
     //@ts-ignore
     const fontFamily = activeObject.fontFamily
@@ -55,8 +42,32 @@ function MenuText() {
     const fill = activeObject.fill
     //@ts-ignore
     const fontSize = activeObject.fontSize
-    updateOptions({ fontFamily, fill , fontSize})
+    updateOptions({ fontFamily, fill, fontSize })
   }, [activeObject])
+
+  const updateOptions = (values: any) => {
+    setOptions({ ...options, ...values })
+  }
+  const handleClick = () => {
+    setDisplayColorPicker(!displayColorPicker)
+  }
+
+  const handleClose = () => {
+    setDisplayColorPicker(false)
+  }
+
+  const handleChangeOption = (key: string, value: any) => {
+    setProperty(key, value)
+    updateOptions({ [key]: value })
+  }
+
+  const setProperty = useCallback(
+    (key, value) => {
+      activeObject?.set(key, value)
+      canvas?.requestRenderAll()
+    },
+    [activeObject]
+  )
 
   const popover: React.CSSProperties = {
     marginTop: "16px",
@@ -69,43 +80,6 @@ function MenuText() {
     right: "0px",
     bottom: "0px",
     left: "0px",
-  }
-
-  const handleChange = (color: any) => {
-    // setOptions({ ...options, fill: color.hex })
-    // if (activeObject && options.objectType === "single") {
-      activeObject?.set("fill", color.hex)
-      canvas?.requestRenderAll()
-      setOptions({ ...options, fill: color.hex })
-    // } else {
-    //   if (activeObject?._objects) {
-    //     activeObject?._objects.forEach((object) => {
-    //       object.set("fill", color.hex)
-    //     })
-    //     canvas?.requestRenderAll()
-    //   }
-    // }
-  }
-  const handleClick = () => {
-    setDisplayColorPicker(!displayColorPicker)
-  }
-
-  const handleClose = () => {
-    setDisplayColorPicker(false)
-  }
-
-  const handleIncrementFontSize = ( size: number ) => {
-    //@ts-ignore
-    activeObject?.set("fontSize", size)
-    canvas?.requestRenderAll()
-    setOptions({ ...options, fontSize: ++options.fontSize  })
-  }
-
-  const handleDecreaseFontSize = ( size: number ) => {
-    //@ts-ignore
-    activeObject?.set("fontSize", size)
-    canvas?.requestRenderAll()
-    setOptions({ ...options, fontSize: --options.fontSize  })
   }
 
   return (
@@ -138,7 +112,7 @@ function MenuText() {
               <MenuItem
                 fontFamily={`${font}`}
                 key={font}
-                onClick={() => updateFontFamilty(font)}
+                onClick={() => handleChangeOption("fontFamily", font)}
               >
                 {font}
               </MenuItem>
@@ -148,7 +122,7 @@ function MenuText() {
         <ButtonGroup spacing={0}>
           <Box
             as="button"
-            onClick={() => handleDecreaseFontSize(options.fontSize)}
+            onClick={() => handleChangeOption("fontSize", --options.fontSize)}
             style={{
               display: "flex",
               alignItems: "center",
@@ -177,7 +151,7 @@ function MenuText() {
           </Box>
           <Box
             as="button"
-            onClick={() => handleIncrementFontSize(options.fontSize)}
+            onClick={() => handleChangeOption("fontSize", ++options.fontSize)}
             style={{
               display: "flex",
               alignItems: "center",
@@ -209,7 +183,9 @@ function MenuText() {
             {displayColorPicker ? (
               <div style={{ ...popover }}>
                 <div style={cover} onClick={handleClose} />
-                <TwitterPicker onChange={handleChange} />
+                <TwitterPicker
+                  onChange={(color) => handleChangeOption("fill", color.hex)}
+                />
               </div>
             ) : null}
           </div>
@@ -228,7 +204,11 @@ function MenuText() {
           </MenuButton>
           <MenuList marginTop="2">
             <div style={{ margin: "0.5rem 1.5rem" }}>
-              <Slider aria-label="slider-ex-1" defaultValue={30} onChange={(val) => console.log(val)}>
+              <Slider
+                aria-label="slider-ex-1"
+                defaultValue={30}
+                onChange={(val) => console.log(val)}
+              >
                 <SliderTrack>
                   <SliderFilledTrack />
                 </SliderTrack>

@@ -33,6 +33,7 @@ function MenuText() {
     fontFamily: "Select a font",
     fill: "#000",
     fontSize: 0,
+    opacity: 1
   })
 
   useEffect(() => {
@@ -42,7 +43,9 @@ function MenuText() {
     const fill = activeObject.fill
     //@ts-ignore
     const fontSize = activeObject.fontSize
-    updateOptions({ fontFamily, fill, fontSize })
+    //@ts-ignore
+    const opacity = activeObject.opacity
+    updateOptions({ fontFamily, fill, fontSize, opacity })
   }, [activeObject])
 
   const updateOptions = (values: any) => {
@@ -60,6 +63,29 @@ function MenuText() {
     setProperty(key, value)
     updateOptions({ [key]: value })
   }
+
+  const handleDelete = () => {
+    if (canvas){
+      //@ts-ignore
+      canvas.remove(activeObject);
+    }
+  }
+
+  const handleClone = () => {
+    if (canvas){
+      activeObject?.clone((clone: any) => {
+        canvas.add(clone.set({
+          //@ts-ignore
+          left: activeObject?.left + 10,
+          //@ts-ignore
+          top: activeObject?.top + 10
+        }));
+        canvas.setActiveObject(clone)
+        canvas.requestRenderAll()
+      });
+    }
+  }
+
 
   const setProperty = useCallback(
     (key, value) => {
@@ -206,8 +232,9 @@ function MenuText() {
             <div style={{ margin: "0.5rem 1.5rem" }}>
               <Slider
                 aria-label="slider-ex-1"
-                defaultValue={30}
-                onChange={(val) => console.log(val)}
+                defaultValue={100}
+                value={options.opacity * 100}
+                onChange={(val) =>  handleChangeOption('opacity', (val/100))}
               >
                 <SliderTrack>
                   <SliderFilledTrack />
@@ -217,10 +244,10 @@ function MenuText() {
             </div>
           </MenuList>
         </Menu>
-        <div>
+        <div onClick={handleClone}>
           <DuplicateObjectIcon />
         </div>
-        <div>
+        <div onClick={handleDelete}>
           <RemoveObjectIcon />
         </div>
       </div>

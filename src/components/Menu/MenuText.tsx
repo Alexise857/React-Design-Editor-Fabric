@@ -15,6 +15,9 @@ import {
   MenuItem,
 } from "@chakra-ui/react"
 import { fontsList } from "@/constants/fonts"
+import { ReactComponent as TextAlignLeft } from '@assets/images/text-align-left.svg'
+import { ReactComponent as TextAlignRight } from '@assets/images/text-align-right.svg'
+import { ReactComponent as TextAlignMiddle } from '@assets/images/text-align-middle.svg'
 
 const Container = styled.div`
   display: flex;
@@ -26,6 +29,8 @@ const Container = styled.div`
   height: 48px;
 `
 
+const textOptions = ["left", "center", "right"]
+
 function MenuText() {
   const { activeObject, canvas } = useCanvasContext()
   const [displayColorPicker, setDisplayColorPicker] = useState(false)
@@ -33,7 +38,10 @@ function MenuText() {
     fontFamily: "Select a font",
     fill: "#000",
     fontSize: 0,
-    opacity: 1
+    opacity: 1,
+    fontWeight: "normal",
+    fontStyle: "normal",
+    textAlign: "center",
   })
 
   useEffect(() => {
@@ -45,7 +53,14 @@ function MenuText() {
     const fontSize = activeObject.fontSize
     //@ts-ignore
     const opacity = activeObject.opacity
-    updateOptions({ fontFamily, fill, fontSize, opacity })
+    //@ts-ignore
+    const fontWeight = activeObject.fontWeight
+    //@ts-ignore
+    const fontStyle = activeObject.fontStyle
+    //@ts-ignore
+    const textAlign = activeObject.textAlign
+    console.log( {textAlign} )
+    updateOptions({ fontFamily, fill, fontSize, opacity, fontWeight, fontStyle,  textAlign})
   }, [activeObject])
 
   const updateOptions = (values: any) => {
@@ -72,7 +87,7 @@ function MenuText() {
   }
 
   const handleClone = () => {
-    if (canvas){
+    if (canvas) {
       activeObject?.clone((clone: any) => {
         canvas.add(clone.set({
           //@ts-ignore
@@ -84,6 +99,12 @@ function MenuText() {
         canvas.requestRenderAll()
       });
     }
+  }
+
+  const changeTextAlign = (currentValue:string) => {
+    const findCurrentIndex = textOptions.findIndex((to) => to === currentValue)
+    const nextValue = textOptions[( (findCurrentIndex + 1) % textOptions.length )]
+    handleChangeOption('textAlign', nextValue)
   }
 
 
@@ -216,6 +237,31 @@ function MenuText() {
             ) : null}
           </div>
         </Box>
+
+          <div onClick={()=>handleChangeOption("fontWeight", options.fontWeight ==  "normal" ? "bold" : "normal")} >
+            <BoldIcon />
+          </div>
+
+          <div onClick={()=>handleChangeOption("fontStyle", options.fontStyle ==  "normal" ? "italic" : "normal")} >
+            <ItalicIcon/>
+          </div>
+
+        <div style={{width: "1px",
+                    height: "24px",
+                    background: "rgba(57,76,96,.15)"
+        }} />
+
+        <div onClick={()=>changeTextAlign(options.textAlign)}>
+          {
+            options.textAlign === "center" ? <TextAlignMiddle/> :
+            options.textAlign === "left" ? <TextAlignLeft/>  :
+            options.textAlign === "right" ? <TextAlignRight/>   : null
+          }
+        </div>
+
+      </ButtonGroup>
+
+      <ButtonGroup  spacing={2}>
       </ButtonGroup>
       <div
         style={{
@@ -340,6 +386,25 @@ function DuplicateObjectIcon() {
         fill="currentColor"
       ></path>
     </svg>
+  )
+}
+
+function BoldIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg"
+         width="24"
+         height="24"
+         viewBox="0 0 24 24"><path fill="#00000f" fillRule="evenodd" d="M7.08 4.72h4.44c2.03 0 3.5.3 4.41.87.92.57 1.37 1.49 1.37 2.75 0 .85-.2 1.55-.6 2.1-.4.54-.93.87-1.6.98v.1c.91.2 1.56.58 1.96 1.13.4.56.6 1.3.6 2.2 0 1.31-.47 2.33-1.4 3.06A6.1 6.1 0 0 1 12.41 19H7.08V4.72zm3.03 5.66h1.75c.82 0 1.42-.13 1.79-.38.36-.26.55-.68.55-1.26 0-.55-.2-.94-.6-1.18a3.86 3.86 0 0 0-1.9-.36h-1.6v3.18zm0 2.4v3.72h1.97c.83 0 1.45-.16 1.84-.48.4-.32.6-.8.6-1.46 0-1.19-.85-1.78-2.54-1.78h-1.87z" fillOpacity="0.3"></path></svg>
+  )
+}
+
+function ItalicIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg"
+         width="24"
+         height="24"
+         viewBox="0 0 24 24"><path fill="#0E1318" fillRule="evenodd" d="M14.73 6.5l-3.67 11H14l-.3 1.5H6l.3-1.5h2.81l3.68-11H10l.3-1.5H18l-.3 1.5h-2.97z"></path></svg>
+
   )
 }
 

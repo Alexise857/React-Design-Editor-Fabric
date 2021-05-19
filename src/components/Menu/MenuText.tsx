@@ -2,20 +2,22 @@ import { useCallback, useEffect, useState } from "react"
 import { useCanvasContext } from "@components/Canvas/hooks"
 import styled from "styled-components"
 import { TwitterPicker } from "react-color"
+import CommonMenu from "./CommonMenu"
 import {
   Menu,
   MenuButton,
   MenuList,
-  Slider,
-  SliderTrack,
-  SliderFilledTrack,
-  SliderThumb,
   ButtonGroup,
   Box,
   MenuItem,
-  Stack
+  Stack,
 } from "@chakra-ui/react"
 import { fontsList } from "@/constants/fonts"
+import { useCoreHandler } from "../Canvas/handlers"
+
+const IconContainer = styled.div`
+  cursor: pointer;
+`
 
 const Container = styled.div`
   display: flex;
@@ -31,6 +33,7 @@ const textOptions = ["left", "center", "right"]
 
 function MenuText() {
   const { activeObject, canvas } = useCanvasContext()
+  const { updateObject } = useCoreHandler()
   const [displayColorPicker, setDisplayColorPicker] = useState(false)
   const [options, setOptions] = useState({
     fontFamily: "Select a font",
@@ -81,28 +84,8 @@ function MenuText() {
   }
 
   const handleChangeOption = (key: string, value: any) => {
-    setProperty(key, value)
+    updateObject(key, value)
     updateOptions({ [key]: value })
-  }
-
-  const handleDelete = () => {
-    if (canvas) {
-      canvas.remove(activeObject as fabric.Object)
-    }
-  }
-
-  const handleClone = () => {
-    if (canvas) {
-      activeObject?.clone((clone: fabric.Object) => {
-        clone.set({
-          left: activeObject?.left! + 10,
-          top: activeObject?.top! + 10,
-        })
-        canvas.add(clone)
-        canvas.setActiveObject(clone)
-        canvas.requestRenderAll()
-      })
-    }
   }
 
   const changeTextAlign = (currentValue: string) => {
@@ -110,14 +93,6 @@ function MenuText() {
     const nextValue = textOptions[(findCurrentIndex + 1) % textOptions.length]
     handleChangeOption("textAlign", nextValue)
   }
-
-  const setProperty = useCallback(
-    (key, value) => {
-      activeObject?.set(key, value)
-      canvas?.requestRenderAll()
-    },
-    [activeObject]
-  )
 
   const popover: React.CSSProperties = {
     marginTop: "16px",
@@ -216,7 +191,6 @@ function MenuText() {
           </Box>
         </ButtonGroup>
 
-
         <Stack spacing={2} direction="row" align="center">
           <Box>
             <div>
@@ -244,7 +218,10 @@ function MenuText() {
             </div>
           </Box>
           <div
-            style={{opacity: options.fontWeight !== "bold" ? "0.5" : "1"}}
+            style={{
+              opacity: options.fontWeight !== "bold" ? "0.5" : "1",
+              cursor: "pointer",
+            }}
             onClick={() =>
               handleChangeOption(
                 "fontWeight",
@@ -256,6 +233,7 @@ function MenuText() {
           </div>
 
           <div
+            style={{ cursor: "pointer" }}
             onClick={() =>
               handleChangeOption(
                 "fontStyle",
@@ -274,7 +252,10 @@ function MenuText() {
             }}
           />
 
-          <div onClick={() => changeTextAlign(options.textAlign)}>
+          <div
+            onClick={() => changeTextAlign(options.textAlign)}
+            style={{ cursor: "pointer" }}
+          >
             {options.textAlign === "center" ? (
               <TextAlignCenterIcon />
             ) : options.textAlign === "left" ? (
@@ -283,46 +264,9 @@ function MenuText() {
               <TextAlignRightIcon />
             ) : null}
           </div>
-
         </Stack>
-
       </ButtonGroup>
-
-      <ButtonGroup spacing={2}></ButtonGroup>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr 1fr",
-          gap: "0.8rem",
-        }}
-      >
-        <Menu>
-          <MenuButton>
-            <TransparencyIcon />
-          </MenuButton>
-          <MenuList marginTop="2">
-            <div style={{ margin: "0.5rem 1.5rem" }}>
-              <Slider
-                aria-label="slider-ex-1"
-                defaultValue={100}
-                value={options.opacity * 100}
-                onChange={(val) => handleChangeOption("opacity", val / 100)}
-              >
-                <SliderTrack>
-                  <SliderFilledTrack />
-                </SliderTrack>
-                <SliderThumb />
-              </Slider>
-            </div>
-          </MenuList>
-        </Menu>
-        <div onClick={handleClone}>
-          <DuplicateObjectIcon />
-        </div>
-        <div onClick={handleDelete}>
-          <RemoveObjectIcon />
-        </div>
-      </div>
+      <CommonMenu />
     </Container>
   )
 }
@@ -395,78 +339,6 @@ function FontColorIcon() {
     >
       <path
         d="M11 2L5.5 16h2.25l1.12-3h6.25l1.12 3h2.25L13 2h-2zm-1.38 9L12 4.67 14.38 11H9.62z"
-        fill="currentColor"
-      ></path>
-    </svg>
-  )
-}
-
-function TransparencyIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-    >
-      <g fill="currentColor" fillRule="evenodd">
-        <path d="M3 2h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm0 8h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1zm0 8h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1z"></path>
-        <path
-          d="M11 2h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm0 8h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1zm0 8h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1z"
-          opacity=".45"
-        ></path>
-        <path
-          d="M19 2h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm0 8h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1zm0 8h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1z"
-          opacity=".15"
-        ></path>
-        <path
-          d="M7 6h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1zm0 8h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1z"
-          opacity=".7"
-        ></path>
-        <path
-          d="M15 6h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1zm0 8h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1z"
-          opacity=".3"
-        ></path>
-      </g>
-    </svg>
-  )
-}
-
-function RemoveObjectIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-    >
-      <path
-        fill="currentColor"
-        d="M8 5a3 3 0 0 1 3-3h2a3 3 0 0 1 3 3h4.25a.75.75 0 1 1 0 1.5H19V18a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V6.5H3.75a.75.75 0 0 1 0-1.5H8zM6.5 6.5V18c0 .83.67 1.5 1.5 1.5h8c.83 0 1.5-.67 1.5-1.5V6.5h-11zm3-1.5h5c0-.83-.67-1.5-1.5-1.5h-2c-.83 0-1.5.67-1.5 1.5zm-.25 4h1.5v8h-1.5V9zm4 0h1.5v8h-1.5V9z"
-      ></path>
-    </svg>
-  )
-}
-
-function DuplicateObjectIcon() {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M5 3h8a2 2 0 0 1 2 2v.5h-1.5V5a.5.5 0 0 0-.5-.5H5a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h2.5V17H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm6 5.5a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5V9a.5.5 0 0 0-.5-.5h-8zM19 7h-8a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"
-        fill="currentColor"
-      ></path>
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M15 11a.75.75 0 0 0-.75.75v1.5h-1.5a.75.75 0 0 0 0 1.5h1.5v1.5a.75.75 0 0 0 1.5 0v-1.5h1.5a.75.75 0 0 0 0-1.5h-1.5v-1.5A.75.75 0 0 0 15 11z"
         fill="currentColor"
       ></path>
     </svg>

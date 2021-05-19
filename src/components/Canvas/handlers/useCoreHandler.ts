@@ -8,8 +8,13 @@ import CanvasObjects, {
 import { fabric } from "fabric"
 
 function useCoreHandler() {
-  const { canvas, setActiveObject, setFormatSize, areaDimension } =
-    useCanvasContext()
+  const {
+    canvas,
+    activeObject,
+    setActiveObject,
+    setFormatSize,
+    areaDimension,
+  } = useCanvasContext()
 
   /**
    * Update format size
@@ -74,6 +79,43 @@ function useCoreHandler() {
       }
     },
     [canvas]
+  )
+
+  /**
+   * Clone the selected object
+   */
+
+  const cloneOject = useCallback(() => {
+    if (canvas) {
+      activeObject?.clone((clone: fabric.Object) => {
+        clone.set({
+          left: activeObject?.left! + 10,
+          top: activeObject?.top! + 10,
+          ...(activeObject.groupType && { groupType: activeObject.groupType }),
+        })
+        canvas.add(clone)
+        canvas.setActiveObject(clone)
+        canvas.requestRenderAll()
+      })
+    }
+  }, [canvas])
+
+  const deleteObject = useCallback(() => {
+    if (canvas && activeObject) {
+      canvas.remove(activeObject as fabric.Object)
+    }
+  }, [canvas, activeObject])
+  /**
+   * Update selected object
+   */
+  const updateObject = useCallback(
+    (key, value) => {
+      if (canvas && activeObject) {
+        activeObject.set(key, value)
+        canvas.requestRenderAll()
+      }
+    },
+    [canvas, activeObject]
   )
 
   /**
@@ -172,10 +214,13 @@ function useCoreHandler() {
 
   return {
     addObject,
+    cloneOject,
+    deleteObject,
     setCanvasBackgroundColor,
     updateFormatSize,
     calculateZoomFitRatio,
     importTemplate,
+    updateObject,
   }
 }
 

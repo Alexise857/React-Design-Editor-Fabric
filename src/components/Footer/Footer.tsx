@@ -8,7 +8,7 @@ import {
   IconButton,
 } from "@chakra-ui/react"
 import { useCanvasContext } from "../Canvas/hooks"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 const Container = styled.div`
   height: 64px;
@@ -25,7 +25,7 @@ interface Option {
 }
 function Footer() {
   const [option, setOption] = useState<Option>({ zoomValue: 40 })
-  const { zoomRatio, setZoomRatio } = useCanvasContext()
+  const { zoomRatio, setZoomRatio, canvas } = useCanvasContext()
 
   const updateOptions = (key: string, value: number) => {
     setOption({ ...option, [key]: value })
@@ -39,6 +39,21 @@ function Footer() {
     setZoomRatio(value / 100)
   }
   const zoomString = parseFloat(option.zoomValue.toFixed(2))
+
+  const handleUndo = useCallback(() => {
+    if (canvas) {
+      //@ts-ignore
+      canvas?.undo();
+    }
+  }, [canvas])
+
+  const handleRedo = useCallback(() => {
+    if (canvas) {
+      //@ts-ignore
+      canvas?.redo();
+    }
+  }, [canvas])
+
   return (
     <Container>
       <div>
@@ -47,13 +62,15 @@ function Footer() {
             variant="outline"
             aria-label="Call Sage"
             fontSize="20px"
-            icon={<i className="material-icons">chevron_left</i>}
+            onClick={handleUndo}
+            icon={<i className="material-icons">undo</i>}
           />
           <IconButton
             variant="outline"
             aria-label="Call Sage"
             fontSize="20px"
-            icon={<i className="material-icons">chevron_right</i>}
+            onClick={handleRedo}
+            icon={<i className="material-icons">redo</i>}
           />
         </ButtonGroup>
       </div>

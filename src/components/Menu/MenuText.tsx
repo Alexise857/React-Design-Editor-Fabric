@@ -2,19 +2,22 @@ import { useCallback, useEffect, useState } from "react"
 import { useCanvasContext } from "@components/Canvas/hooks"
 import styled from "styled-components"
 import { TwitterPicker } from "react-color"
+import CommonMenu from "./CommonMenu"
 import {
   Menu,
   MenuButton,
   MenuList,
-  Slider,
-  SliderTrack,
-  SliderFilledTrack,
-  SliderThumb,
   ButtonGroup,
   Box,
   MenuItem,
+  Stack,
 } from "@chakra-ui/react"
 import { fontsList } from "@/constants/fonts"
+import { useCoreHandler } from "../Canvas/handlers"
+
+const IconContainer = styled.div`
+  cursor: pointer;
+`
 
 const Container = styled.div`
   display: flex;
@@ -26,13 +29,20 @@ const Container = styled.div`
   height: 48px;
 `
 
+const textOptions = ["left", "center", "right"]
+
 function MenuText() {
   const { activeObject, canvas } = useCanvasContext()
+  const { updateObject } = useCoreHandler()
   const [displayColorPicker, setDisplayColorPicker] = useState(false)
   const [options, setOptions] = useState({
     fontFamily: "Select a font",
     fill: "#000",
     fontSize: 0,
+    opacity: 1,
+    fontWeight: "normal",
+    fontStyle: "normal",
+    textAlign: "center",
   })
 
   useEffect(() => {
@@ -42,7 +52,24 @@ function MenuText() {
     const fill = activeObject.fill
     //@ts-ignore
     const fontSize = activeObject.fontSize
-    updateOptions({ fontFamily, fill, fontSize })
+    //@ts-ignore
+    const opacity = activeObject.opacity
+    //@ts-ignore
+    const fontWeight = activeObject.fontWeight
+    //@ts-ignore
+    const fontStyle = activeObject.fontStyle
+    //@ts-ignore
+    const textAlign = activeObject.textAlign
+
+    updateOptions({
+      fontFamily,
+      fill,
+      fontSize,
+      opacity,
+      fontWeight,
+      fontStyle,
+      textAlign,
+    })
   }, [activeObject])
 
   const updateOptions = (values: any) => {
@@ -57,17 +84,15 @@ function MenuText() {
   }
 
   const handleChangeOption = (key: string, value: any) => {
-    setProperty(key, value)
+    updateObject(key, value)
     updateOptions({ [key]: value })
   }
 
-  const setProperty = useCallback(
-    (key, value) => {
-      activeObject?.set(key, value)
-      canvas?.requestRenderAll()
-    },
-    [activeObject]
-  )
+  const changeTextAlign = (currentValue: string) => {
+    const findCurrentIndex = textOptions.findIndex((to) => to === currentValue)
+    const nextValue = textOptions[(findCurrentIndex + 1) % textOptions.length]
+    handleChangeOption("textAlign", nextValue)
+  }
 
   const popover: React.CSSProperties = {
     marginTop: "16px",
@@ -165,66 +190,142 @@ function MenuText() {
             +
           </Box>
         </ButtonGroup>
-        <Box>
-          <div>
-            <div
-              style={{
-                cursor: "pointer",
-                position: "relative",
-                height: "30px",
-                width: "30px",
-                background: `${options.fill}`,
-                boxShadow: "inset 0 0 0 1px rgb(57 76 96 / 15%)",
-                borderRadius: "2px",
-              }}
-              onClick={() => handleClick()}
-            ></div>
 
-            {displayColorPicker ? (
-              <div style={{ ...popover }}>
-                <div style={cover} onClick={handleClose} />
-                <TwitterPicker
-                  onChange={(color) => handleChangeOption("fill", color.hex)}
-                />
-              </div>
+        <Stack spacing={2} direction="row" align="center">
+          <Box>
+            <div>
+              <div
+                style={{
+                  cursor: "pointer",
+                  position: "relative",
+                  height: "24px",
+                  width: "24px",
+                  background: `${options.fill}`,
+                  boxShadow: "inset 0 0 0 1px rgb(57 76 96 / 15%)",
+                  borderRadius: "2px",
+                }}
+                onClick={() => handleClick()}
+              ></div>
+
+              {displayColorPicker ? (
+                <div style={{ ...popover }}>
+                  <div style={cover} onClick={handleClose} />
+                  <TwitterPicker
+                    onChange={(color) => handleChangeOption("fill", color.hex)}
+                  />
+                </div>
+              ) : null}
+            </div>
+          </Box>
+          <div
+            style={{
+              opacity: options.fontWeight !== "bold" ? "0.5" : "1",
+              cursor: "pointer",
+            }}
+            onClick={() =>
+              handleChangeOption(
+                "fontWeight",
+                options.fontWeight == "normal" ? "bold" : "normal"
+              )
+            }
+          >
+            <BoldIcon />
+          </div>
+
+          <div
+            style={{ cursor: "pointer" }}
+            onClick={() =>
+              handleChangeOption(
+                "fontStyle",
+                options.fontStyle == "normal" ? "italic" : "normal"
+              )
+            }
+          >
+            <ItalicIcon />
+          </div>
+
+          <div
+            style={{
+              width: "1px",
+              height: "24px",
+              background: "rgba(57,76,96,.15)",
+            }}
+          />
+
+          <div
+            onClick={() => changeTextAlign(options.textAlign)}
+            style={{ cursor: "pointer" }}
+          >
+            {options.textAlign === "center" ? (
+              <TextAlignCenterIcon />
+            ) : options.textAlign === "left" ? (
+              <TextAlignLeftIcon />
+            ) : options.textAlign === "right" ? (
+              <TextAlignRightIcon />
             ) : null}
           </div>
-        </Box>
+        </Stack>
       </ButtonGroup>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr 1fr",
-          gap: "0.8rem",
-        }}
-      >
-        <Menu>
-          <MenuButton>
-            <TransparencyIcon />
-          </MenuButton>
-          <MenuList marginTop="2">
-            <div style={{ margin: "0.5rem 1.5rem" }}>
-              <Slider
-                aria-label="slider-ex-1"
-                defaultValue={30}
-                onChange={(val) => console.log(val)}
-              >
-                <SliderTrack>
-                  <SliderFilledTrack />
-                </SliderTrack>
-                <SliderThumb />
-              </Slider>
-            </div>
-          </MenuList>
-        </Menu>
-        <div>
-          <DuplicateObjectIcon />
-        </div>
-        <div>
-          <RemoveObjectIcon />
-        </div>
-      </div>
+      <CommonMenu />
     </Container>
+  )
+}
+
+const TextIcons = [TextAlignRightIcon, TextAlignLeftIcon, TextAlignCenterIcon]
+
+function TextAlignRightIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+    >
+      <path
+        fill="currentColor"
+        fillRule="evenodd"
+        d="M20.25 5.25a.75.75 0 1 1 0 1.5H3.75a.75.75 0 0 1 0-1.5h16.5zm0 4a.75.75 0 1 1 0 1.5h-8.5a.75.75 0 1 1 0-1.5h8.5zm0 4a.75.75 0 1 1 0 1.5H3.75a.75.75 0 1 1 0-1.5h16.5zm0 4a.75.75 0 1 1 0 1.5h-8.5a.75.75 0 1 1 0-1.5h8.5z"
+      ></path>
+    </svg>
+  )
+}
+
+function TextAlignLeftIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+    >
+      <defs>
+        <path
+          id="_310417673__a"
+          d="M3.75 5.25h16.5a.75.75 0 1 1 0 1.5H3.75a.75.75 0 0 1 0-1.5zm0 4h8.5a.75.75 0 1 1 0 1.5h-8.5a.75.75 0 1 1 0-1.5zm0 4h16.5a.75.75 0 1 1 0 1.5H3.75a.75.75 0 1 1 0-1.5zm0 4h8.5a.75.75 0 1 1 0 1.5h-8.5a.75.75 0 1 1 0-1.5z"
+        ></path>
+      </defs>
+      <use
+        fill="currentColor"
+        xlinkHref="#_310417673__a"
+        fill-rule="evenodd"
+      ></use>
+    </svg>
+  )
+}
+function TextAlignCenterIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+    >
+      <path
+        fill="currentColor"
+        fillRule="evenodd"
+        d="M3.75 5.25h16.5a.75.75 0 1 1 0 1.5H3.75a.75.75 0 0 1 0-1.5zm4 4h8.5a.75.75 0 1 1 0 1.5h-8.5a.75.75 0 1 1 0-1.5zm-4 4h16.5a.75.75 0 1 1 0 1.5H3.75a.75.75 0 1 1 0-1.5zm4 4h8.5a.75.75 0 1 1 0 1.5h-8.5a.75.75 0 1 1 0-1.5z"
+      ></path>
+    </svg>
   )
 }
 
@@ -244,38 +345,7 @@ function FontColorIcon() {
   )
 }
 
-function TransparencyIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-    >
-      <g fill="currentColor" fillRule="evenodd">
-        <path d="M3 2h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm0 8h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1zm0 8h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1z"></path>
-        <path
-          d="M11 2h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm0 8h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1zm0 8h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1z"
-          opacity=".45"
-        ></path>
-        <path
-          d="M19 2h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm0 8h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1zm0 8h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1z"
-          opacity=".15"
-        ></path>
-        <path
-          d="M7 6h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1zm0 8h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1z"
-          opacity=".7"
-        ></path>
-        <path
-          d="M15 6h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1zm0 8h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1z"
-          opacity=".3"
-        ></path>
-      </g>
-    </svg>
-  )
-}
-
-function RemoveObjectIcon() {
+function BoldIcon() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -284,33 +354,27 @@ function RemoveObjectIcon() {
       viewBox="0 0 24 24"
     >
       <path
-        fill="currentColor"
-        d="M8 5a3 3 0 0 1 3-3h2a3 3 0 0 1 3 3h4.25a.75.75 0 1 1 0 1.5H19V18a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V6.5H3.75a.75.75 0 0 1 0-1.5H8zM6.5 6.5V18c0 .83.67 1.5 1.5 1.5h8c.83 0 1.5-.67 1.5-1.5V6.5h-11zm3-1.5h5c0-.83-.67-1.5-1.5-1.5h-2c-.83 0-1.5.67-1.5 1.5zm-.25 4h1.5v8h-1.5V9zm4 0h1.5v8h-1.5V9z"
+        fill="black"
+        fillRule="evenodd"
+        opacity="currentColor"
+        d="M7.08 4.72h4.44c2.03 0 3.5.3 4.41.87.92.57 1.37 1.49 1.37 2.75 0 .85-.2 1.55-.6 2.1-.4.54-.93.87-1.6.98v.1c.91.2 1.56.58 1.96 1.13.4.56.6 1.3.6 2.2 0 1.31-.47 2.33-1.4 3.06A6.1 6.1 0 0 1 12.41 19H7.08V4.72zm3.03 5.66h1.75c.82 0 1.42-.13 1.79-.38.36-.26.55-.68.55-1.26 0-.55-.2-.94-.6-1.18a3.86 3.86 0 0 0-1.9-.36h-1.6v3.18zm0 2.4v3.72h1.97c.83 0 1.45-.16 1.84-.48.4-.32.6-.8.6-1.46 0-1.19-.85-1.78-2.54-1.78h-1.87z"
       ></path>
     </svg>
   )
 }
 
-function DuplicateObjectIcon() {
+function ItalicIcon() {
   return (
     <svg
+      xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
       viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
     >
       <path
+        fill="#0E1318"
         fillRule="evenodd"
-        clipRule="evenodd"
-        d="M5 3h8a2 2 0 0 1 2 2v.5h-1.5V5a.5.5 0 0 0-.5-.5H5a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h2.5V17H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm6 5.5a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5V9a.5.5 0 0 0-.5-.5h-8zM19 7h-8a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"
-        fill="currentColor"
-      ></path>
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M15 11a.75.75 0 0 0-.75.75v1.5h-1.5a.75.75 0 0 0 0 1.5h1.5v1.5a.75.75 0 0 0 1.5 0v-1.5h1.5a.75.75 0 0 0 0-1.5h-1.5v-1.5A.75.75 0 0 0 15 11z"
-        fill="currentColor"
+        d="M14.73 6.5l-3.67 11H14l-.3 1.5H6l.3-1.5h2.81l3.68-11H10l.3-1.5H18l-.3 1.5h-2.97z"
       ></path>
     </svg>
   )

@@ -17,8 +17,15 @@ interface ICanvasContext {
   setFormatSize: (option: FormatSize) => void
   areaDimension: AreaDimension
   setAreaDimension: (option: AreaDimension) => void
+  contextMenu: ContextMenu
+  setContextMenu: (option: ContextMenu) => void
 }
 
+interface ContextMenu {
+  visible: boolean
+  top: number
+  left: number
+}
 interface Dimension {
   width: number
   height: number
@@ -39,6 +46,8 @@ export const CanvasContext = createContext<ICanvasContext>({
   setFormatSize: () => {},
   areaDimension: { width: 0, height: 0 },
   setAreaDimension: () => {},
+  contextMenu: { top: 0, left: 0, visible: false },
+  setContextMenu: () => {},
 })
 
 export const CanvasProvider: FC = ({ children }) => {
@@ -46,6 +55,11 @@ export const CanvasProvider: FC = ({ children }) => {
   const [activeObject, setActiveObject] = useState<FabricObject | null>(null)
   const [zoomRatio, setZoomRatio] = useState(1)
   const [zoomFitRatio, setZoomFitRatio] = useState(1)
+  const [contextMenu, setContextMenu] = useState({
+    top: 0,
+    left: 0,
+    visible: false,
+  })
   const [formatSize, setFormatSize] = useState<FormatSize>({
     height: 400,
     width: 600,
@@ -67,6 +81,8 @@ export const CanvasProvider: FC = ({ children }) => {
     setFormatSize,
     areaDimension,
     setAreaDimension,
+    contextMenu,
+    setContextMenu,
   }
 
   return (

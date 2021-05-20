@@ -1,9 +1,9 @@
-import styled from "styled-components"
 import { useEffect, useRef } from "react"
 import { fabric } from "fabric"
 import { useCanvasContext } from "./hooks"
 import { Scrollbars } from "react-custom-scrollbars"
 import ResizeObserver from "resize-observer-polyfill"
+import styled from "@emotion/styled"
 import {
   useCustomizationHandler,
   useEventsHandler,
@@ -19,7 +19,7 @@ const Container = styled.div`
 `
 
 function Canvas() {
-  const { setCanvas, setAreaDimension } = useCanvasContext()
+  const { setCanvas, setAreaDimension, contextMenu } = useCanvasContext()
   const containerRef = useRef<any>()
   useCustomizationHandler()
   useEventsHandler()
@@ -31,6 +31,7 @@ function Canvas() {
         height: 400,
         width: 600,
         backgroundColor: "#ffffff",
+        fireRightClick: true,
       })
     )
   }, [setCanvas])
@@ -39,6 +40,7 @@ function Canvas() {
     const initialHeight = containerRef.current?.clientHeight
     const intialWidth = containerRef.current?.clientWidth
     setAreaDimension({ width: intialWidth! - 32, height: initialHeight! - 32 })
+
     const resizeObserver = new ResizeObserver(
       (entries: ResizeObserverEntry[]) => {
         const { width = intialWidth, height = initialHeight } =
@@ -54,7 +56,31 @@ function Canvas() {
 
   return (
     <Container>
-      <div ref={containerRef} style={{ position: "relative", flex: 1 }}>
+      <div
+        onContextMenu={(e) => e.preventDefault()}
+        ref={containerRef}
+        style={{ position: "relative", flex: 1 }}
+      >
+        {contextMenu.visible && (
+          <div
+            onContextMenu={(e) => e.preventDefault()}
+            className="A"
+            style={{
+              position: "absolute",
+              left: `${contextMenu.left + 240}px`,
+              top: `${contextMenu.top}px`,
+              zIndex: 9,
+              width: "240px",
+              background: "red",
+              pointerEvents: "none",
+            }}
+          >
+            <div>Alonso</div>
+            <div>Dany</div>
+            <div>Lee</div>
+          </div>
+        )}
+
         <Scrollbars autoHide>
           <div
             style={{

@@ -102,6 +102,12 @@ function PanelText() {
     addObject(options)
   }
 
+  const isFiltered = (element: string) => {
+    const ele = element.toLowerCase()
+    const res = query.toLowerCase()
+    return ele.includes(res) || ele === res
+  }
+
   return (
     <PanelContainer>
       <Scrollbars autoHide>

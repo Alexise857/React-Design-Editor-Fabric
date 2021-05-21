@@ -19,7 +19,7 @@ const Container = styled.div`
 `
 
 function Canvas() {
-  const { setCanvas, setAreaDimension } = useCanvasContext()
+  const { setCanvas, setAreaDimension, canvas } = useCanvasContext()
   const containerRef = useRef<any>()
   useCustomizationHandler()
   useEventsHandler()
@@ -53,10 +53,20 @@ function Canvas() {
       resizeObserver.unobserve(containerRef.current!)
     }
   }, [])
+  useEffect(() => {
+    containerRef.current.addEventListener("mousedown", (e: any) => {
+      if (e.target.localName === "div") {
+        if (canvas) {
+          canvas.discardActiveObject().renderAll()
+        }
+      }
+    })
+  }, [canvas])
 
   return (
     <Container>
       <div
+        id="xdsakcasncasncjxx"
         onContextMenu={(e) => e.preventDefault()}
         ref={containerRef}
         style={{ position: "relative", flex: 1 }}

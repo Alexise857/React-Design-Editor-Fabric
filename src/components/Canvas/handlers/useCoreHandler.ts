@@ -86,7 +86,6 @@ function useCoreHandler() {
    */
 
   const cloneOject = useCallback(() => {
-    // console.log("cloning")
     if (canvas) {
       activeObject?.clone((clone: fabric.Object) => {
         clone.set({

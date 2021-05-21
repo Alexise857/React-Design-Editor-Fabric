@@ -86,6 +86,7 @@ function useCoreHandler() {
    */
 
   const cloneOject = useCallback(() => {
+    // console.log("cloning")
     if (canvas) {
       activeObject?.clone((clone: fabric.Object) => {
         clone.set({
@@ -98,7 +99,7 @@ function useCoreHandler() {
         canvas.requestRenderAll()
       })
     }
-  }, [canvas])
+  }, [canvas, activeObject])
 
   const deleteObject = useCallback(() => {
     if (canvas && activeObject) {

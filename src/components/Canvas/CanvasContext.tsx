@@ -21,7 +21,9 @@ interface ICanvasContext {
   setContextMenu: (option: ContextMenu) => void
 }
 
-interface ContextMenu {
+type ContextMenuType = "canvas" | "object"
+export interface ContextMenu {
+  type: ContextMenuType
   visible: boolean
   top: number
   left: number
@@ -46,7 +48,7 @@ export const CanvasContext = createContext<ICanvasContext>({
   setFormatSize: () => {},
   areaDimension: { width: 0, height: 0 },
   setAreaDimension: () => {},
-  contextMenu: { top: 0, left: 0, visible: false },
+  contextMenu: { top: 0, left: 0, visible: false, type: "canvas" },
   setContextMenu: () => {},
 })
 
@@ -55,10 +57,11 @@ export const CanvasProvider: FC = ({ children }) => {
   const [activeObject, setActiveObject] = useState<FabricObject | null>(null)
   const [zoomRatio, setZoomRatio] = useState(1)
   const [zoomFitRatio, setZoomFitRatio] = useState(1)
-  const [contextMenu, setContextMenu] = useState({
+  const [contextMenu, setContextMenu] = useState<ContextMenu>({
     top: 0,
     left: 0,
     visible: false,
+    type: "canvas",
   })
   const [formatSize, setFormatSize] = useState<FormatSize>({
     height: 400,

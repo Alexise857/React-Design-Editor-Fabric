@@ -18,10 +18,8 @@ function useEventHandlers() {
 
   const onMouseDown = useCallback(
     (e: any) => {
-      e.e.preventDefault()
-      // console.log(e)
-      if (e.button === 3) {
-        // console.log(e)
+      // verify if target exists too
+      if (e.button === 3 && e.target) {
         // @ts-ignore
         setContextMenu({
           ...contextMenu,

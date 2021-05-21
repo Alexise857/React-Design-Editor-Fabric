@@ -10,7 +10,7 @@ import {
   useGuidelinesHandler,
   useZoomHandler,
 } from "./handlers"
-
+import ContextMenu from "@components/ContextMenu/ContextMenu"
 import "fabric-history"
 
 const Container = styled.div`
@@ -19,7 +19,7 @@ const Container = styled.div`
 `
 
 function Canvas() {
-  const { setCanvas, setAreaDimension, contextMenu } = useCanvasContext()
+  const { setCanvas, setAreaDimension } = useCanvasContext()
   const containerRef = useRef<any>()
   useCustomizationHandler()
   useEventsHandler()
@@ -61,26 +61,6 @@ function Canvas() {
         ref={containerRef}
         style={{ position: "relative", flex: 1 }}
       >
-        {contextMenu.visible && (
-          <div
-            onContextMenu={(e) => e.preventDefault()}
-            className="A"
-            style={{
-              position: "absolute",
-              left: `${contextMenu.left + 240}px`,
-              top: `${contextMenu.top}px`,
-              zIndex: 9,
-              width: "240px",
-              background: "red",
-              pointerEvents: "none",
-            }}
-          >
-            <div>Alonso</div>
-            <div>Dany</div>
-            <div>Lee</div>
-          </div>
-        )}
-
         <Scrollbars autoHide>
           <div
             style={{
@@ -102,8 +82,10 @@ function Canvas() {
               <div
                 style={{
                   padding: "1rem",
+                  position: "relative",
                 }}
               >
+                <ContextMenu />
                 <canvas id="canvas"></canvas>
               </div>
             </div>

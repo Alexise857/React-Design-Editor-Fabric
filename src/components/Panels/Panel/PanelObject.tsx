@@ -18,6 +18,12 @@ function PanelObject() {
     addObject(options)
   }
 
+  const isFiltered = (element: string) => {
+    const ele = element.toLowerCase()
+    const res = query.toLowerCase()
+    return ele.includes(res) || ele === res
+  }
+
   return (
     <PanelContainer>
       <Scrollbars autoHide>
@@ -49,24 +55,26 @@ function PanelObject() {
             padding: "2rem",
           }}
         >
-          {objects.map((object) => (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: "0 0 1rem 0",
-              }}
-              key={object.id}
-              onClick={() => addObjectToCanvas(object.path)}
-            >
-              <img
-                style={{ maxHeight: "90px", maxWidth: "100px" }}
-                src={object.preview}
-                alt="preview"
-              />
-            </div>
-          ))}
+          {objects
+            .filter((object) => isFiltered(object.name))
+            .map((object) => (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "0 0 1rem 0",
+                }}
+                key={object.id}
+                onClick={() => addObjectToCanvas(object.path)}
+              >
+                <img
+                  style={{ maxHeight: "90px", maxWidth: "100px" }}
+                  src={object.preview}
+                  alt="preview"
+                />
+              </div>
+            ))}
         </div>
       </Scrollbars>
     </PanelContainer>

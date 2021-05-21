@@ -98,7 +98,7 @@ function useCoreHandler() {
         canvas.requestRenderAll()
       })
     }
-  }, [canvas])
+  }, [canvas, activeObject])
 
   const deleteObject = useCallback(() => {
     if (canvas && activeObject) {

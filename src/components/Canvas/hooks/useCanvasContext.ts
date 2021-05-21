@@ -13,6 +13,8 @@ function useCanvasContext() {
     setFormatSize,
     areaDimension,
     setAreaDimension,
+    contextMenu,
+    setContextMenu,
   } = useContext(CanvasContext)
 
   return {
@@ -26,6 +28,8 @@ function useCanvasContext() {
     setFormatSize,
     areaDimension,
     setAreaDimension,
+    contextMenu,
+    setContextMenu,
   }
 }
 

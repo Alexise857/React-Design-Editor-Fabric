@@ -1,13 +1,13 @@
 // @ts-nocheck
-import { useEffect } from 'react'
-import { fabric } from 'fabric'
+import { useEffect } from "react"
+import { fabric } from "fabric"
 import {
   drawCircleIcon,
   drawVerticalLineIcon,
   drawHorizontalLineIcon,
   drawRotateIcon,
-} from '@components/Canvas/utils'
-import { useCanvasContext } from '@components/Canvas/hooks'
+} from "@components/Canvas/utils"
+import { useCanvasContext } from "@components/Canvas/hooks"
 
 function useCustomizationHandler() {
   const { canvas } = useCanvasContext()
@@ -17,9 +17,9 @@ function useCustomizationHandler() {
    */
   useEffect(() => {
     fabric.Object.prototype.transparentCorners = false
-    fabric.Object.prototype.cornerColor = '#20bf6b'
-    fabric.Object.prototype.cornerStyle = 'circle'
-    fabric.Object.prototype.borderColor = '#00D9E1'
+    fabric.Object.prototype.cornerColor = "#20bf6b"
+    fabric.Object.prototype.cornerStyle = "circle"
+    fabric.Object.prototype.borderColor = "#00D9E1"
     fabric.Object.prototype.cornerSize = 12
     fabric.Object.prototype.borderScaleFactor = 2.4
     fabric.Object.prototype.borderOpacityWhenMoving = 0
@@ -118,7 +118,7 @@ function useCustomizationHandler() {
       offsetY: -40,
       actionHandler: fabric.controlsUtils.rotationWithSnapping,
       cursorStyleHandler: fabric.controlsUtils.rotationStyleHandler,
-      actionName: 'rotate',
+      actionName: "rotate",
       render: drawRotateIcon,
       cornerSize: 28,
       withConnection: false,
@@ -141,7 +141,7 @@ function useCustomizationHandler() {
       y: 0,
       actionHandler: fabric.controlsUtils.changeWidth,
       cursorStyleHandler: fabric.controlsUtils.scaleSkewCursorStyleHandler,
-      actionName: 'resizing',
+      actionName: "resizing",
       render: drawVerticalLineIcon,
       cornerSize: 28,
       withConnection: true,
@@ -152,7 +152,7 @@ function useCustomizationHandler() {
       y: 0,
       actionHandler: fabric.controlsUtils.changeWidth,
       cursorStyleHandler: fabric.controlsUtils.scaleSkewCursorStyleHandler,
-      actionName: 'resizing',
+      actionName: "resizing",
       render: drawVerticalLineIcon,
       cornerSize: 28,
       withConnection: true,
@@ -164,7 +164,7 @@ function useCustomizationHandler() {
       offsetY: -40,
       actionHandler: fabric.controlsUtils.rotationWithSnapping,
       cursorStyleHandler: fabric.controlsUtils.rotationStyleHandler,
-      actionName: 'rotate',
+      actionName: "rotate",
       render: drawRotateIcon,
       cornerSize: 28,
       withConnection: false,
@@ -176,7 +176,7 @@ function useCustomizationHandler() {
    */
   useEffect(() => {
     if (canvas) {
-      canvas.on('selection:created', function (ev) {
+      canvas.on("selection:created", function (ev) {
         const objects = canvas.getActiveObjects()
         if (objects.length > 1) {
           ev.target.setControlsVisibility({
@@ -196,8 +196,8 @@ function useCustomizationHandler() {
    */
   useEffect(() => {
     if (canvas) {
-      canvas.selectionColor = 'rgba(46, 204, 113, 0.15)'
-      canvas.selectionBorderColor = 'rgb(39, 174, 96)'
+      canvas.selectionColor = "rgba(46, 204, 113, 0.15)"
+      canvas.selectionBorderColor = "rgb(39, 174, 96)"
       canvas.selectionLineWidth = 0.4
     }
   }, [canvas])

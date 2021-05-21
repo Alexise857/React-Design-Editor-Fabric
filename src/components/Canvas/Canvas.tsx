@@ -1,16 +1,16 @@
-import styled from "styled-components"
 import { useEffect, useRef } from "react"
 import { fabric } from "fabric"
 import { useCanvasContext } from "./hooks"
 import { Scrollbars } from "react-custom-scrollbars"
 import ResizeObserver from "resize-observer-polyfill"
+import styled from "@emotion/styled"
 import {
   useCustomizationHandler,
   useEventsHandler,
   useGuidelinesHandler,
   useZoomHandler,
 } from "./handlers"
-
+import ContextMenu from "@components/ContextMenu/ContextMenu"
 import "fabric-history"
 
 const Container = styled.div`
@@ -19,7 +19,7 @@ const Container = styled.div`
 `
 
 function Canvas() {
-  const { setCanvas, setAreaDimension } = useCanvasContext()
+  const { setCanvas, setAreaDimension, canvas } = useCanvasContext()
   const containerRef = useRef<any>()
   useCustomizationHandler()
   useEventsHandler()
@@ -31,6 +31,7 @@ function Canvas() {
         height: 400,
         width: 600,
         backgroundColor: "#ffffff",
+        fireRightClick: true,
       })
     )
   }, [setCanvas])
@@ -39,6 +40,7 @@ function Canvas() {
     const initialHeight = containerRef.current?.clientHeight
     const intialWidth = containerRef.current?.clientWidth
     setAreaDimension({ width: intialWidth! - 32, height: initialHeight! - 32 })
+
     const resizeObserver = new ResizeObserver(
       (entries: ResizeObserverEntry[]) => {
         const { width = intialWidth, height = initialHeight } =
@@ -51,10 +53,24 @@ function Canvas() {
       resizeObserver.unobserve(containerRef.current!)
     }
   }, [])
+  useEffect(() => {
+    containerRef.current.addEventListener("mousedown", (e: any) => {
+      if (e.target.localName === "div") {
+        if (canvas) {
+          canvas.discardActiveObject().renderAll()
+        }
+      }
+    })
+  }, [canvas])
 
   return (
     <Container>
-      <div ref={containerRef} style={{ position: "relative", flex: 1 }}>
+      <div
+        id="xdsakcasncasncjxx"
+        onContextMenu={(e) => e.preventDefault()}
+        ref={containerRef}
+        style={{ position: "relative", flex: 1 }}
+      >
         <Scrollbars autoHide>
           <div
             style={{
@@ -76,8 +92,10 @@ function Canvas() {
               <div
                 style={{
                   padding: "1rem",
+                  position: "relative",
                 }}
               >
+                <ContextMenu />
                 <canvas id="canvas"></canvas>
               </div>
             </div>

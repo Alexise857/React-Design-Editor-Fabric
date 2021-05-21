@@ -47,7 +47,6 @@ export function getTemplates(): Promise<ITemplate[]> {
           }
           return template
         })
-        // console.log()
         resolve(templates)
       })
       .catch((err) => reject(err))

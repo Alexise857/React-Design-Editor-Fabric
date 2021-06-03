@@ -1,4 +1,4 @@
-import { useCallback } from "react"
+import { useCallback, useEffect } from "react"
 import { useCanvasContext } from "@components/Canvas/hooks"
 import { loadImageFromURL } from "@components/Canvas/utils/canvas"
 import { FormatSize } from "@components/Canvas/CanvasContext"
@@ -14,6 +14,7 @@ function useCoreHandler() {
     setActiveObject,
     setFormatSize,
     areaDimension,
+    clipBoards,
   } = useCanvasContext()
 
   /**
@@ -87,18 +88,25 @@ function useCoreHandler() {
 
   const cloneOject = useCallback(() => {
     if (canvas) {
-      activeObject?.clone((clone: fabric.Object) => {
-        clone.set({
-          left: activeObject?.left! + 10,
-          top: activeObject?.top! + 10,
-          ...(activeObject.groupType && { groupType: activeObject.groupType }),
+      let objects: fabric.Object[] = []
+      if (activeObject) {
+        objects = [activeObject]
+      } else if (!!clipBoards.length) {
+        objects = clipBoards
+      }
+      objects.forEach((object) => {
+        object.clone((clone: fabric.Object) => {
+          clone.set({
+            left: object?.left! + 10,
+            top: object?.top! + 10,
+          })
+          canvas.add(clone)
+          canvas.setActiveObject(clone)
+          canvas.requestRenderAll()
         })
-        canvas.add(clone)
-        canvas.setActiveObject(clone)
-        canvas.requestRenderAll()
       })
     }
-  }, [canvas, activeObject])
+  }, [canvas, activeObject, clipBoards])
 
   const deleteObject = useCallback(() => {
     if (canvas && activeObject) {

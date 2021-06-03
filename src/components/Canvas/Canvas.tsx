@@ -7,6 +7,7 @@ import styled from "@emotion/styled"
 import {
   useCustomizationHandler,
   useEventsHandler,
+  useGridHandler,
   useGuidelinesHandler,
   useZoomHandler,
 } from "./handlers"
@@ -25,6 +26,7 @@ function Canvas() {
   useEventsHandler()
   useZoomHandler()
   useGuidelinesHandler()
+  useGridHandler()
   useEffect(() => {
     setCanvas(
       new fabric.Canvas("canvas", {

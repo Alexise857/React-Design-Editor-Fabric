@@ -10,6 +10,7 @@ function useEventHandlers() {
     setZoomRatio,
     contextMenu,
     setContextMenu,
+    setClipBoards,
   } = useCanvasContext()
 
   /**
@@ -18,8 +19,12 @@ function useEventHandlers() {
 
   const onMouseDown = useCallback(
     (e: any) => {
-      // verify if target exists too
       if (e.button === 3 && e.target) {
+        if (e.target._objects) {
+          setClipBoards(e.target._objects)
+        } else {
+          setClipBoards([e.target])
+        }
         // @ts-ignore
         setContextMenu({
           ...contextMenu,

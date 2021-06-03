@@ -25,6 +25,7 @@ const ContextMenuContainer = styled.div<any>(
 function ContextMenu() {
   const { contextMenu, setContextMenu } = useCanvasContext()
   const { deleteObject, cloneOject } = useCoreHandler()
+  // console.log(contextMenu)
   return (
     <ContextMenuContainer
       top={contextMenu.top}

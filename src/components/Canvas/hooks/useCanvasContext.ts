@@ -15,6 +15,10 @@ function useCanvasContext() {
     setAreaDimension,
     contextMenu,
     setContextMenu,
+    clipBoards,
+    setClipBoards,
+    grid,
+    setGrid,
   } = useContext(CanvasContext)
 
   return {
@@ -30,6 +34,10 @@ function useCanvasContext() {
     setAreaDimension,
     contextMenu,
     setContextMenu,
+    clipBoards,
+    setClipBoards,
+    grid,
+    setGrid,
   }
 }
 

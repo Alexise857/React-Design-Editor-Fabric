@@ -4,6 +4,23 @@ interface FabricObject extends fabric.Object {
   groupType?: string
   _objects?: fabric.Object[]
 }
+
+export const defaultGrid = {
+  size: 60,
+  enabled: true,
+  color: "#e2e2e2",
+  name: "bgGrid",
+  snap: true,
+}
+
+interface Grid {
+  size: number
+  enabled: boolean
+  color: string
+  name: string
+  snap: boolean
+}
+
 interface ICanvasContext {
   zoomRatio: number
   setZoomRatio: React.Dispatch<React.SetStateAction<number>>
@@ -19,6 +36,10 @@ interface ICanvasContext {
   setAreaDimension: (option: AreaDimension) => void
   contextMenu: ContextMenu
   setContextMenu: (option: ContextMenu) => void
+  clipBoards: fabric.Object[]
+  setClipBoards: (options: fabric.Object[]) => void
+  grid: Grid
+  setGrid: (option: Grid) => void
 }
 
 type ContextMenuType = "canvas" | "object"
@@ -50,6 +71,10 @@ export const CanvasContext = createContext<ICanvasContext>({
   setAreaDimension: () => {},
   contextMenu: { top: 0, left: 0, visible: false, type: "canvas" },
   setContextMenu: () => {},
+  clipBoards: [],
+  setClipBoards: () => {},
+  grid: defaultGrid,
+  setGrid: () => {},
 })
 
 export const CanvasProvider: FC = ({ children }) => {
@@ -57,6 +82,8 @@ export const CanvasProvider: FC = ({ children }) => {
   const [activeObject, setActiveObject] = useState<FabricObject | null>(null)
   const [zoomRatio, setZoomRatio] = useState(1)
   const [zoomFitRatio, setZoomFitRatio] = useState(1)
+  const [clipBoards, setClipBoards] = useState<fabric.Object[]>([])
+  const [grid, setGrid] = useState(defaultGrid)
   const [contextMenu, setContextMenu] = useState<ContextMenu>({
     top: 0,
     left: 0,
@@ -86,6 +113,10 @@ export const CanvasProvider: FC = ({ children }) => {
     setAreaDimension,
     contextMenu,
     setContextMenu,
+    clipBoards,
+    setClipBoards,
+    grid,
+    setGrid,
   }
 
   return (

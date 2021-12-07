@@ -85,6 +85,7 @@ function useGridHandler() {
   }, [canvas, grid])
 
   useEffect(() => {
+
     if (grid.enabled) {
       drawGrid()
     } else {
